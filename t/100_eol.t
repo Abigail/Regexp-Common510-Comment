@@ -28,7 +28,7 @@ foreach my $language (@languages) {
     my $checker = Test::Regexp -> new -> init (
         pattern      => $pattern1,
         keep_pattern => $pattern2,
-        name         => "Perl comment",
+        name         => "$lang comment",
     );
 
     foreach my $body ("", "#", "###", "foo bar", "//", "--", "/* # */") {
