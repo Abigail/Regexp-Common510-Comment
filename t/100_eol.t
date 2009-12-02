@@ -31,7 +31,9 @@ foreach my $language (@languages) {
         name         => "$lang comment",
     );
 
-    foreach my $body ("", "#", "###", "foo bar", "//", "--", "/* # */") {
+    foreach my $body ("", "$token", "$token$token$token",
+                      "foo bar", "//", "--", "/* $token */",
+                      "\x{4E00}", "aap noot \xBB mies") {
         my $subject = $token . $body . "\n";
         $checker -> match ($subject, [[open_delimiter  => "#"],
                                       [body            => $body],
