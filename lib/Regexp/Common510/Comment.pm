@@ -1,11 +1,33 @@
 package Regexp::Common510::Comment;
 
-use 5.006;
+use 5.010;
 use strict;
 use warnings;
 no  warnings 'syntax';
 
 our $VERSION = '2009120201';
+
+use Regexp::Common510;
+
+my $NO_NL = $] >= 5.011001 ? '\N' : '[^\n]';
+
+#
+# Return a pattern which starts with a specific token, and lasts
+# up till the first following newline.
+#
+sub eol ($) {
+    my $token = shift;
+
+    state $seen;
+
+    $$seen {open} //= "(?k<open_delimiter>:$token)" .
+                      "(?k<body>:$NO_NL*)"          .
+                      "(?k<close_delimiter>:\n)";
+}
+
+
+pattern qw [Comment Perl],
+        -pattern => eol '#';
 
 
 1;
