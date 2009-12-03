@@ -20,14 +20,62 @@ sub eol ($) {
 
     state $seen;
 
-    $$seen {open} //= "(?k<open_delimiter>:$token)" .
-                      "(?k<body>:$NO_NL*)"          .
-                      "(?k<close_delimiter>:\n)";
+    $$seen {$token} //= "(?k<open_delimiter>:$token)" .
+                        "(?k<body>:$NO_NL*)"          .
+                        "(?k<close_delimiter>:\n)";
 }
 
+my %eol = (
+    Ada              =>  '--',
+    Advisor          =>  '#|//',
+    Advsys           =>  ';',
+    Alan             =>  '--',
+    awk              =>  '#',
+   'beta-Juliet'     =>  '//',
+    CLU              =>  '%',
+    CQL              =>  ';',
+   'Crystal Report'  =>  '//',
+    Eiffel           =>  '--',
+    Fortran          =>  '!',
+    fvwm2            =>  '#',
+    ICON             =>  '#',
+    ILLGOL           =>  'NB',
+    J                =>  'NB[.]',
+    LaTeX            =>  '%',
+    Lisp             =>  ';',
+    LOGO             =>  ';',
+    lua              =>  '--',
+    M                =>  ';',
+    m4               =>  '#',
+    MUMPS            =>  ';',
+    mutt             =>  '#',
+    Perl             =>  '#',
+   'PL/B'            =>  '[.;]',
+    Portia           =>  '//',
+    Python           =>  '#',
+   'Q-BAL'           =>  '`',
+    QML              =>  '#',
+    R                =>  '#',
+    REBOL            =>  ';',
+    Ruby             =>  '#',
+    Scheme           =>  ';',
+    shell            =>  '#',
+    slrn             =>  '%',
+    SMITH            =>  ';',
+    SQL              =>  '-{2,}',
+    Tcl              =>  '#',
+    TeX              =>  '%',
+    troff            =>  '\\\"',
+    Ubercode         =>  '//',
+    vi               =>  '"',
+    zonefile         =>  ';',
+   'ZZT-OOP'         =>  "'",
+);
 
-pattern qw [Comment Perl],
-        -pattern => eol '#';
+while (my ($lang, $token) = each %eol) {
+    pattern Comment  => $lang,
+            -pattern => eol $token
+}
 
 
 1;
