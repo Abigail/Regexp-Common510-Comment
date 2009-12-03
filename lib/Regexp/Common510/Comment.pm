@@ -18,11 +18,9 @@ my $NO_NL = $] >= 5.011001 ? '\N' : '[^\n]';
 sub eol ($) {
     my $token = shift;
 
-    state $seen;
-
-    $$seen {$token} //= "(?k<open_delimiter>:$token)" .
-                        "(?k<body>:$NO_NL*)"          .
-                        "(?k<close_delimiter>:\n)";
+    "(?k<open_delimiter>:$token)" .
+    "(?k<body>:$NO_NL*)"          .
+    "(?k<close_delimiter>:\n)";
 }
 
 my %eol = (
