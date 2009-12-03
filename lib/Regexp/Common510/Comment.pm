@@ -28,7 +28,25 @@ sub eol ($$) {
     ")";
 }
 
-my %eol = (
+#
+# Return a pattern that starts and ends with specific tokens.
+#
+sub from_to ($$$) {
+    my ($lang, $open, $close) = @_;
+
+    die "Not implemented yet" if length $close > 1;
+
+    my $key   = "Comment__" . name2key $lang;
+
+    "(?k<$key>:"  .
+         "(?k<open_delimiter>:$open)"   .
+         "(?k<body>:[^$close]*)"        .
+         "(?k<close_delimiter>:$close)" .
+    ")";
+}
+
+
+my @eol = (
     Ada              =>  '--',
     Advisor          =>  '#|//',
     Advsys           =>  ';',
@@ -75,11 +93,23 @@ my %eol = (
    'ZZT-OOP'         =>  "'",
 );
 
-while (my ($lang, $token) = each %eol) {
-    pattern Comment  => $lang,
-            -pattern => eol $lang => $token,
+my @from_to = (
+    Haifu            =>  ',', ',',
+    Smalltalk        =>  '"', '"',
+);
+
+
+while (@eol) {
+    my ($lang, $token) =   splice @eol, 0, 2;
+    pattern Comment    => $lang,
+            -pattern   =>  eol $lang => $token,
 }
 
+while (@from_to) {
+    my ($lang, $open, $close) =   splice @from_to, 0, 3;
+    pattern Comment           => $lang,
+            -pattern          =>  from_to $lang => $open, $close;
+}
 
 1;
 
