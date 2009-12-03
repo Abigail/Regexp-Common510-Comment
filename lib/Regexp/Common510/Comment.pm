@@ -7,7 +7,7 @@ no  warnings 'syntax';
 
 our $VERSION = '2009120201';
 
-use Regexp::Common510;
+use Regexp::Common510 -api => 'pattern', 'name2key';
 
 my $NO_NL = $] >= 5.011001 ? '\N' : '[^\n]';
 
@@ -15,12 +15,17 @@ my $NO_NL = $] >= 5.011001 ? '\N' : '[^\n]';
 # Return a pattern which starts with a specific token, and lasts
 # up till the first following newline.
 #
-sub eol ($) {
+sub eol ($$) {
+    my $lang  = shift;
     my $token = shift;
 
-    "(?k<open_delimiter>:$token)" .
-    "(?k<body>:$NO_NL*)"          .
-    "(?k<close_delimiter>:\n)";
+    my $key   = "Comment__" . name2key $lang;
+
+    "(?k<$key>:"  .
+         "(?k<open_delimiter>:$token)"  .
+         "(?k<body>:$NO_NL*)"           .
+         "(?k<close_delimiter>:\n)"     .
+    ")";
 }
 
 my %eol = (
@@ -72,7 +77,7 @@ my %eol = (
 
 while (my ($lang, $token) = each %eol) {
     pattern Comment  => $lang,
-            -pattern => eol $token
+            -pattern => eol $lang => $token,
 }
 
 

@@ -35,9 +35,10 @@ my %args = (
     LICENSE              =>  'mit',
     META_MERGE           => {
         test_requires    => {
-            'strict'             => 0,
-            'warnings'           => 0,
-            'Test::More'         => 0.88,
+            'strict'             =>          0,
+            'warnings'           =>          0,
+            'Test::More'         =>          0.88,
+            'Test::Regexp'       => 2009120301,
         },
         resources        => {
             repository   => $REPOSITORY,

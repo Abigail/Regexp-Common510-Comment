@@ -7,11 +7,19 @@ use warnings;
 no  warnings 'syntax';
 
 use Test::More 0.88;
-use Test::Regexp;
+use Test::Regexp 2009120301;
 
 our $r = eval "require Test::NoWarnings; 1";
 
 use Regexp::Common510 'Comment';
+
+my %name2key = (
+   'beta-Juliet'     => 'beta_Juliet',
+   'Crystal Report'  => 'Crystal_Report',
+   'PL/B'            => 'PL_B',
+   'Q-BAL'           => 'Q_BAL',
+   'ZZT-OOP'         => 'ZZT_OOP',
+);
 
 my @data = (
     Ada              =>  '--',
@@ -69,6 +77,8 @@ my $BIG = (join "" => 'a' .. 'z', 'A' .. 'Z', 0 .. 9) x 20;
 while (@data) {
     my ($lang, $token) = splice @data, 0, 2;
 
+    my $key      = "Comment__" . ($name2key {$lang} // $lang);
+
     my $pattern1 = RE Comment => $lang;
     my $pattern2 = RE Comment => $lang, -Keep => 1;
     ok $pattern1, "Got a pattern ($pattern1)";
@@ -77,7 +87,8 @@ while (@data) {
     my $checker = Test::Regexp -> new -> init (
         pattern      => $pattern1,
         keep_pattern => $pattern2,
-        name         => "$lang comment",
+        name         => "Comment $lang",
+        show_line    => 1,
     );
 
     foreach my $body ("", "$token", "$token$token$token",
@@ -85,7 +96,8 @@ while (@data) {
                       "\x{4E00}", "aap noot \xBB mies", $BIG) {
         my $subject = $token . $body . "\n";
         unless ($lang eq 'SQL' && $subject =~ /^$token-/) {
-            $checker -> match ($subject, [[open_delimiter  => $token],
+            $checker -> match ($subject, [[$key            => $subject],
+                                          [open_delimiter  => $token],
                                           [body            => $body],
                                           [close_delimiter => "\n"]]);
         }
