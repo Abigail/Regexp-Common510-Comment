@@ -91,29 +91,33 @@ while (@data) {
         show_line    => 1,
     );
 
-    foreach my $body ("", "$token", "$token$token$token",
-                      "foo bar", "//", "--", "/* $token */",
-                      "\x{4E00}", "aap noot \xBB mies", $BIG) {
-        my $subject = $token . $body . "\n";
-        unless ($lang eq 'SQL' && $subject =~ /^$token-/) {
-            $checker -> match ($subject, [[$key            => $subject],
-                                          [open_delimiter  => $token],
-                                          [body            => $body],
-                                          [close_delimiter => "\n"]]);
-        }
+    my @pass;
+    my @fail;
 
-        my @subject_fail = ("$token$body",
-                             $body =~ /^$token/ ? () : "$body\n",
-                             $body ? "$token\n$body" : (),
-                            "$token$body\n$token",
-                            "$token$body$token");
-        foreach my $subject (@subject_fail) {
-            next if $subject eq "//\n"           && $lang eq 'Advisor';
-            next if $subject eq "--\n"           && $lang eq 'SQL';
-            next if $subject eq qq {\\"\n}       && $lang eq 'troff';
-            next if $subject eq qq {\\"\\"\\"\n} && $lang eq 'troff';
-            $checker -> no_match ($subject);
-        }
+    push @pass => "", "foo bar", "\x{4E00}", "aap noot \xBB mies", $BIG,
+                  "//", "/* $token */";
+    if ($lang ne 'SQL') {
+        push @pass => "--", $token, "$token$token$token";
+    }
+
+    push @fail => $token, "$token foo bar", "$token foo \n\n",
+                 "$token foo \n bar \n", "$token foo\n$token bar\n",
+                 "$token foo \n ";
+    if ($lang ne 'Advisor') {
+        push @fail => "//\n", "// foo\n" unless $token eq '//';
+        push @fail => "#\n",  "# \n"     unless $token eq '#';
+    }
+
+    foreach my $body (@pass) {
+        my $subject = "$token$body\n";
+        $checker -> match ($subject, [[$key            => $subject],
+                                      [open_delimiter  => $token],
+                                      [body            => $body],
+                                      [close_delimiter => "\n"]]);
+    }
+
+    foreach my $subject (@fail) {
+        $checker -> no_match ($subject);
     }
 }
 
