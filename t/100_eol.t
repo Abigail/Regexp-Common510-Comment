@@ -100,17 +100,29 @@ while (@data) {
         push @pass => "--", $token, "$token$token$token";
     }
 
-    push @fail => $token, "$token foo bar", "$token foo \n\n",
-                 "$token foo \n bar \n", "$token foo\n$token bar\n",
-                 "$token foo \n ";
+    push @fail => (
+        [$token                     => "Only opening token"],
+        ["$token foo bar"           => "No trailing newline"],
+        ["$token foo \n\n"          => "Duplicate newline"],
+        ["$token foo \n bar \n"     => "Internal newline"],
+        ["$token foo\n$token bar\n" => "Duplicate comment"],
+        ["$token foo\n "            => "Trailing space"],
+        [" $token foo\n"            => "Leading space"],
+    );
     if ($lang ne 'Advisor') {
-        push @fail => "//\n", "// foo\n" unless $token eq '//';
-        push @fail => "#\n",  "# \n"     unless $token eq '#';
+        push @fail => ["//\n"       => "Wrong opening token"],
+                      ["// foo\n"   => "Wrong opening token"]
+                      unless $token eq '//';
+        push @fail => ["#\n"        => "Wrong opening token"],
+                      ["# \n"       => "Wrong opening token"]
+                      unless $token eq '#';
+
     }
     if (length ($token) > 1) {
         my $Token = $token;
         $Token =~ s/^.\K/ /;
-        push @fail => "$Token\n", "$Token foo bar\n";
+        push @fail => ["$Token\n"         => "Garbled opening token"],
+                      ["$Token foo bar\n" => "Garbled opening token"];
     }
 
     foreach my $body (@pass) {
@@ -121,8 +133,9 @@ while (@data) {
                                       [close_delimiter => "\n"]]);
     }
 
-    foreach my $subject (@fail) {
-        $checker -> no_match ($subject);
+    foreach my $fail (@fail) {
+        my ($subject, $reason) = @$fail;
+        $checker -> no_match ($subject, reason => $reason);
     }
 }
 
