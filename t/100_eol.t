@@ -107,6 +107,11 @@ while (@data) {
         push @fail => "//\n", "// foo\n" unless $token eq '//';
         push @fail => "#\n",  "# \n"     unless $token eq '#';
     }
+    if (length ($token) > 1) {
+        my $Token = $token;
+        $Token =~ s/^.\K/ /;
+        push @fail => "$Token\n", "$Token foo bar\n";
+    }
 
     foreach my $body (@pass) {
         my $subject = "$token$body\n";
