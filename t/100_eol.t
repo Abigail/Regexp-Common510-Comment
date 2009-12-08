@@ -48,9 +48,14 @@ my @data = (
     m4               =>  '#',
     MUMPS            =>  ';',
     mutt             =>  '#',
+    Nickle           =>  '#',
+    PEARL            =>  '!',
     Perl             =>  '#',
+    PHP              =>  '#',
+    PHP              =>  '//',
    'PL/B'            =>  '.',
    'PL/B'            =>  ';',
+   'PL/SQL'          =>  '--',
     Portia           =>  '//',
     Python           =>  '#',
    'Q-BAL'           =>  '`',
@@ -123,7 +128,7 @@ while (@data) {
         ["$token $W\n "            => "trailing space"],
         [" $token $W\n"            => "leading space"],
     );
-    if ($lang ne 'Advisor') {
+    if ($lang ne 'Advisor' && $lang ne 'PHP') {
         push @fail => ["//\n"       => "wrong opening delimiter"],
                       ["// foo\n"   => "wrong opening delimiter"]
                       unless $token eq '//';
