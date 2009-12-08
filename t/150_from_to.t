@@ -17,17 +17,29 @@ use Regexp::Common510 'Comment';
 my %name2key = (
    'Algol 60'        =>  'Algol_60',
    'Befunge-98'      =>  'Befunge_98',
+   'C--'             =>  'C__',
    'Funge-98'        =>  'Funge_98',
+   'PL/I'            =>  'PL_I',
+   '*W'              =>  '_W',
 );
 
 my @data = (
     ALPACA           =>  '/*',      '*/',
+    B                =>  '/*',      '*/',
+    BML              =>  '<?_c',    '_c?>',
+    C                =>  '/*',      '*/',
+   'C--'             =>  '/*',      '*/',
    'Algol 60'        =>  'comment', ';',
    'Befunge-98'      =>  ';',       ';',
    'Funge-98'        =>  ';',       ';',
+    False            =>  '!{',      '}!',
     Haifu            =>  ',',       ',',
+    LPC              =>  '/*',      '*/',
+    Oberon           =>  '(*',      '*)',
+   'PL/I'            =>  '/*',      '*/',
     Shelta           =>  ';',       ';',
     Smalltalk        =>  '"',       '"',
+   '*W'              =>  '||',      '!!',
 );
 
 my $BIG = (join "" => 'a' .. 'z', 'A' .. 'Z', 0 .. 9) x 20;
@@ -95,17 +107,17 @@ while (@data) {
             ;
     }
 
+    my $wack = $lang eq '*W' ? '??' : '!!';
     push @fail => 
         ["$open$close$close"         =>  "extra close delimiter"],
         ["$open foo bar"             =>  "no close delimiter"],
-        ["$open !!"                  =>  "no close delimiter"],
+        ["$open $wack"               =>  "no close delimiter"],
         ["$open"                     =>  "no close delimiter"],
         ["$open $W $W $close\n"      =>  "trailing newline"],
         ["$open $W $W $close$close"  =>  "extra close delimiter"],
         ["\n $open $W $W $close"     =>  "leading newline"],
         ["$open$close$BIG"           =>  "body after close delimiter"]
         ;
-
 
     run_tests
         pass          => \@pass,
