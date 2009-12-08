@@ -16,6 +16,7 @@ our $ams = eval "require Acme::MetaSyntactic; 1";
 
 my @random;
 if ($ams) {
+    local $^W = 0;  # Surpress a warning in Acme::MetaSyntactic.
     push @random => "Acme::MetaSyntactic" -> new ($_) -> name (0)
           for "Acme::MetaSyntactic" -> themes;
 }
