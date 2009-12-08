@@ -22,6 +22,7 @@ my %name2key = (
 );
 
 my @data = (
+    ABC              =>  '\\',
     Ada              =>  '--',
     Advisor          =>  '//',
     Advisor          =>  '#',
@@ -33,6 +34,7 @@ my @data = (
     CQL              =>  ';',   
    'Crystal Report'  =>  '//',
     Eiffel           =>  '--',
+    Forth            =>  '\\',
     Fortran          =>  '!',
     fvwm2            =>  '#',
     ICON             =>  '#',

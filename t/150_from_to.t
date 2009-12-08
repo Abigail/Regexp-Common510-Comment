@@ -14,11 +14,19 @@ our $r = eval "require Test::NoWarnings; 1";
 use Regexp::Common510 'Comment';
 
 my %name2key = (
+   'Algol 60'        =>  'Algol_60',
+   'Befunge-98'      =>  'Befunge_98',
+   'Funge-98'        =>  'Funge_98',
 );
 
 my @data = (
-    Haifu            =>  ',', ',',
-    Smalltalk        =>  '"', '"',
+    ALPACA           =>  '/*',      '*/',
+   'Algol 60'        =>  'comment', ';',
+   'Befunge-98'      =>  ';',       ';',
+   'Funge-98'        =>  ';',       ';',
+    Haifu            =>  ',',       ',',
+    Shelta           =>  ';',       ';',
+    Smalltalk        =>  '"',       '"',
 );
 
 my $BIG = (join "" => 'a' .. 'z', 'A' .. 'Z', 0 .. 9) x 20;
@@ -30,46 +38,93 @@ while (@data) {
 
     my $pattern1 = RE Comment => $lang;
     my $pattern2 = RE Comment => $lang, -Keep => 1;
-    ok $pattern1, "Got a pattern ($pattern1)";
-    ok $pattern2, "Got a keep pattern ($pattern2)";
+    ok $pattern1, "Got a pattern for $lang: qr {$pattern1}";
+    ok $pattern2, "Got a keep pattern for $lang: qr {$pattern2}";
 
     my $checker = Test::Regexp -> new -> init (
         pattern      => $pattern1,
         keep_pattern => $pattern2,
         name         => "Comment $lang",
-        show_line    => 1,
     );
 
     my @pass;  # Only bodies.
     my @fail;  # Complete subjects.
 
-    push @pass => "", "foo bar", "\n", "baz \x{4E00} quux", $BIG, "--", "//";
+    push @pass => 
+        [""                   =>  "empty body"],
+        ["foo bar"            =>  "standard body"],
+        ["\n"                 =>  "body is newline"],
+        ["foo \x{BB} bar"     =>  "Latin-1 in body"],
+        ["baz \x{4E00} quux"  =>  "Unicode in body"],
+        [$BIG                 =>  "Large body"],
+        ["--"                 =>  "hyphens"],
+        ["//"                 =>  "slashes"],
+        [" "                  =>  "body is a space"]
+        ;
+
     if ($open ne $close) {
-        push @pass => $open, "$open$open$open", "/* $open */";
-        push @fail => "$open foo bar $open", "$open \n $open";
-        push @fail => "$close$open", "$close \n $open";
+        if (-1 == index "$open$open" => $close) {
+            push @pass => 
+                [$open              =>  "body consists of opening delimiter"],
+                ["$open$open$open"  =>  "body consists of multiple opening " .
+                                        "delimiters"],
+            ;
+        }
+        else {
+            push @fail =>
+                ["$open$open"       =>  "trailing garbage"],
+                ["$open$open$open"  =>  "trailing garbage"],
+                ;
+        }
+
+        if ($close ne '*/') {
+            push @pass => ["/* $open */"  => "C comment"],
+            ;
+        }
+        else {
+            push @fail => ["$open /* $open */ $close" => "trailing garbage"],
+            ;
+        }
+
+        push @fail =>
+            ["$open foo bar $open" => "open instead of close delimiter"],
+            ["$open \n $open"      => "open instead of close delimiter"],
+            ["$close$open"         => "reversed delimiters"],
+            ["$close \n $open"     => "reversed delimiters"]
+            ;
     }
 
-    push @fail => "$open$close$close",
-                  "$open foo bar",
-                  "$open !!",
-                  "$open",
-                  "$open foo bar $close\n",
-                  "$open foo bar $close$close",
-                  "\n $open foo bar $close",
-                  "$open$close$BIG";
+    push @fail => 
+        ["$open$close$close"           =>  "extra close delimiter"],
+        ["$open foo bar"               =>  "no close delimiter"],
+        ["$open !!"                    =>  "no close delimiter"],
+        ["$open"                       =>  "no close delimiter"],
+        ["$open foo bar $close\n"      =>  "trailing newline"],
+        ["$open foo bar $close$close"  =>  "extra close delimiter"],
+        ["\n $open foo bar $close"     =>  "leading newline"],
+        ["$open$close$BIG"             =>  "body after close delimiter"]
+        ;
 
-    foreach my $body (@pass) {
+    my $errors = 0;
+
+    foreach my $test (@pass) {
+        my ($body, $reason) = @$test;
         my $subject = "$open$body$close";
-        $checker -> match ($subject, [[$key            => $subject],
-                                      [open_delimiter  => $open],
-                                      [body            => $body],
-                                      [close_delimiter => $close]]);
+        $errors ++ unless
+            $checker -> match ($subject, [[$key            => $subject],
+                                          [open_delimiter  => $open],
+                                          [body            => $body],
+                                          [close_delimiter => $close]],
+                               test    => $reason);
     }
 
-    foreach my $subject (@fail) {
-        $checker -> no_match ($subject);
+    foreach my $test (@fail) {
+        my ($subject, $reason) = @$test;
+        $errors ++ unless
+            $checker -> no_match ($subject, reason => $reason);
     }
+
+    BAIL_OUT if $errors && $ENV {BAILOUT_EARLY};
 }
 
 Test::NoWarnings::had_no_warnings () if $r;

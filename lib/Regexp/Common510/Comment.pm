@@ -34,19 +34,28 @@ sub eol ($$) {
 sub from_to ($$$) {
     my ($lang, $open, $close) = @_;
 
-    die "Not implemented yet" if length $close > 1;
-
     my $key   = "Comment__" . name2key $lang;
 
-    "(?k<$key>:"  .
-         "(?k<open_delimiter>:$open)"   .
-         "(?k<body>:[^$close]*)"        .
-         "(?k<close_delimiter>:$close)" .
-    ")";
+    my $body;
+    if (length ($close) == 1) {
+        $body = "[^$close]*";
+    }
+    else {
+        my $f = quotemeta substr $close, 0, 1;
+        my $l = quotemeta substr $close, 1;
+        $body = "[^$f]*(?:$f(?!$l)[^$f]*)*";
+    }
+
+    return "(?k<$key>:"  .
+                "(?k<open_delimiter>:\Q$open\E)"   .
+                "(?k<body>:$body)"                 .
+                "(?k<close_delimiter>:\Q$close\E)" .
+           ")";
 }
 
 
 my @eol = (
+    ABC              =>  '\\\\',  # That's a *single* backslash.
     Ada              =>  '--',
     Advisor          =>  '#|//',
     Advsys           =>  ';',
@@ -57,6 +66,7 @@ my @eol = (
     CQL              =>  ';',
    'Crystal Report'  =>  '//',
     Eiffel           =>  '--',
+    Forth            =>  '\\\\',
     Fortran          =>  '!',
     fvwm2            =>  '#',
     ICON             =>  '#',
@@ -94,8 +104,13 @@ my @eol = (
 );
 
 my @from_to = (
-    Haifu            =>  ',', ',',
-    Smalltalk        =>  '"', '"',
+   'Algol 60'        =>  'comment', ';',
+    ALPACA           =>  '/*',      '*/',
+   'Befunge-98'      =>  ';',       ';',
+   'Funge-98'        =>  ';',       ';',
+    Haifu            =>  ',',       ',',
+    Shelta           =>  ';',       ';',
+    Smalltalk        =>  '"',       '"',
 );
 
 
