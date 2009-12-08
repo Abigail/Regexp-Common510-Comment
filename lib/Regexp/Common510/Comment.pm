@@ -113,10 +113,20 @@ my @from_to = (
    '*W'              =>  '||',      '!!',
 );
 
+my @eol_from_to = (
+   'C++'             =>  '//',      '/*',  '*/',
+   'C#'              =>  '//',      '/*',  '*/',
+    Cg               =>  '//',      '/*',  '*/',
+    ECMAScript       =>  '//',      '/*',  '*/',
+    FPL              =>  '//',      '/*',  '*/',
+    Java             =>  '//',      '/*',  '*/',
+    JavaScript       =>  '//',      '/*',  '*/',
+);
+
 
 while (@eol) {
     my ($lang, $token) =   splice @eol, 0, 2;
-    my $pattern        =   eol $token;
+    my  $pattern       =   eol $token;
     pattern Comment    => $lang,
             -pattern   => "(?k<comment>:$pattern)",
     ;
@@ -124,9 +134,18 @@ while (@eol) {
 
 while (@from_to) {
     my ($lang, $open, $close) =   splice @from_to, 0, 3;
-    my $pattern               =   from_to $open => $close;
+    my  $pattern              =   from_to $open => $close;
     pattern Comment           => $lang,
             -pattern          => "(?k<comment>:$pattern)",
+    ;
+}
+
+while (@eol_from_to) {
+    my ($lang, $token, $open, $close) = splice @eol_from_to, 0, 4;
+    my  $pattern1             =   eol     $token;
+    my  $pattern2             =   from_to $open => $close;
+    pattern Comment           => $lang,
+            -pattern          => "(?k<comment>:(?|$pattern1|$pattern2))",
     ;
 }
 
