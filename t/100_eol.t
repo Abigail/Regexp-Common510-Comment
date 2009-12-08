@@ -136,8 +136,8 @@ while (@data) {
     if (length ($token) > 1) {
         my $Token = $token;
         $Token =~ s/^.\K/ /;
-        push @fail => ["$Token\n"         => "garbled opening delimiter"],
-                      ["$Token foo bar\n" => "garbled opening delimiter"];
+        push @fail => ["$Token\n"       => "garbled opening delimiter"],
+                      ["$Token $W $W\n" => "garbled opening delimiter"];
     }
 
     run_tests
