@@ -39,6 +39,8 @@ my %args = (
             'warnings'           =>          0,
             'Test::More'         =>          0.88,
             'Test::Regexp'       => 2009120801,
+            'Tie::Scalar'        =>          0,
+            'Exporter'           =>          0,
         },
         resources        => {
             repository   => $REPOSITORY,

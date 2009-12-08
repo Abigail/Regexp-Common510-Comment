@@ -8,6 +8,7 @@ no  warnings 'syntax';
 
 use Test::More 0.88;
 use Test::Regexp 2009120801;
+use t::Common;
 
 our $r = eval "require Test::NoWarnings; 1";
 
@@ -51,15 +52,15 @@ while (@data) {
     my @fail;  # Complete subjects.
 
     push @pass => 
-        [""                   =>  "empty body"],
-        ["foo bar"            =>  "standard body"],
-        ["\n"                 =>  "body is newline"],
-        ["foo \x{BB} bar"     =>  "Latin-1 in body"],
-        ["baz \x{4E00} quux"  =>  "Unicode in body"],
-        [$BIG                 =>  "Large body"],
-        ["--"                 =>  "hyphens"],
-        ["//"                 =>  "slashes"],
-        [" "                  =>  "body is a space"]
+        [""                 =>  "empty body"],
+        ["$W $W"            =>  "standard body"],
+        ["\n"               =>  "body is newline"],
+        ["$W \x{BB} $W"     =>  "Latin-1 in body"],
+        ["$W \x{4E00} $W"   =>  "Unicode in body"],
+        [$BIG               =>  "Large body"],
+        ["--"               =>  "hyphens"],
+        ["//"               =>  "slashes"],
+        [" "                =>  "body is a space"]
         ;
 
     if ($open ne $close) {
@@ -87,7 +88,7 @@ while (@data) {
         }
 
         push @fail =>
-            ["$open foo bar $open" => "open instead of close delimiter"],
+            ["$open $W $W $open"   => "open instead of close delimiter"],
             ["$open \n $open"      => "open instead of close delimiter"],
             ["$close$open"         => "reversed delimiters"],
             ["$close \n $open"     => "reversed delimiters"]
@@ -95,14 +96,14 @@ while (@data) {
     }
 
     push @fail => 
-        ["$open$close$close"           =>  "extra close delimiter"],
-        ["$open foo bar"               =>  "no close delimiter"],
-        ["$open !!"                    =>  "no close delimiter"],
-        ["$open"                       =>  "no close delimiter"],
-        ["$open foo bar $close\n"      =>  "trailing newline"],
-        ["$open foo bar $close$close"  =>  "extra close delimiter"],
-        ["\n $open foo bar $close"     =>  "leading newline"],
-        ["$open$close$BIG"             =>  "body after close delimiter"]
+        ["$open$close$close"         =>  "extra close delimiter"],
+        ["$open foo bar"             =>  "no close delimiter"],
+        ["$open !!"                  =>  "no close delimiter"],
+        ["$open"                     =>  "no close delimiter"],
+        ["$open $W $W $close\n"      =>  "trailing newline"],
+        ["$open $W $W $close$close"  =>  "extra close delimiter"],
+        ["\n $open $W $W $close"     =>  "leading newline"],
+        ["$open$close$BIG"           =>  "body after close delimiter"]
         ;
 
     my $errors = 0;
