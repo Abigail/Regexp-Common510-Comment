@@ -91,55 +91,75 @@ while (@data) {
         pattern      => $pattern1,
         keep_pattern => $pattern2,
         name         => "Comment $lang",
-        show_line    => 1,
     );
 
     my @pass;
     my @fail;
 
-    push @pass => "", "foo bar", "\x{4E00}", "aap noot \xBB mies", $BIG,
-                  "//", "/* $token */";
+    push @pass => 
+        [""                 =>  "empty body"],
+        ["$W $W"            =>  "standard body"],
+        ["$W \x{BB} $W"     =>  "Latin-1 in body"],
+        ["$W \x{4E00} $W"   =>  "Unicode in body"],
+        [$BIG               =>  "Large body"],
+        ["//"               =>  "slashes"],
+        [" "                =>  "body is a space"],
+        ["/* $token */"     =>  "C comment with opening delimiter"],
+        ;
+
     if ($lang ne 'SQL') {
-        push @pass => "--", $token, "$token$token$token";
+        push @pass => 
+            ["--"                  =>  "SQL comment"],
+            [$token                =>  "repeated opening delimiter"],
+            ["$token$token$token"  =>  "repeated opening delimiter"],
+            ;
     }
 
     push @fail => (
-        [$token                     => "Only opening token"],
-        ["$token foo bar"           => "No trailing newline"],
-        ["$token foo \n\n"          => "Duplicate newline"],
-        ["$token foo \n bar \n"     => "Internal newline"],
-        ["$token foo\n$token bar\n" => "Duplicate comment"],
-        ["$token foo\n "            => "Trailing space"],
-        [" $token foo\n"            => "Leading space"],
+        [$token                    => "only opening delimiter"],
+        ["$token $W $W"            => "no trailing newline"],
+        ["$token $W \n\n"          => "duplicate newline"],
+        ["$token $W \n $W \n"      => "internal newline"],
+        ["$token $W\n$token $W\n"  => "duplicate comment"],
+        ["$token $W\n "            => "trailing space"],
+        [" $token $W\n"            => "leading space"],
     );
     if ($lang ne 'Advisor') {
-        push @fail => ["//\n"       => "Wrong opening token"],
-                      ["// foo\n"   => "Wrong opening token"]
+        push @fail => ["//\n"       => "wrong opening delimiter"],
+                      ["// foo\n"   => "wrong opening delimiter"]
                       unless $token eq '//';
-        push @fail => ["#\n"        => "Wrong opening token"],
-                      ["# \n"       => "Wrong opening token"]
+        push @fail => ["#\n"        => "wrong opening delimiter"],
+                      ["# \n"       => "wrong opening delimiter"]
                       unless $token eq '#';
 
     }
     if (length ($token) > 1) {
         my $Token = $token;
         $Token =~ s/^.\K/ /;
-        push @fail => ["$Token\n"         => "Garbled opening token"],
-                      ["$Token foo bar\n" => "Garbled opening token"];
+        push @fail => ["$Token\n"         => "garbled opening delimiter"],
+                      ["$Token foo bar\n" => "garbled opening delimiter"];
     }
 
-    foreach my $body (@pass) {
+    my $errors = 0;
+
+    foreach my $test (@pass) {
+        my ($body, $reason) = @$test;
         my $subject = "$token$body\n";
-        $checker -> match ($subject, [[$key            => $subject],
-                                      [open_delimiter  => $token],
-                                      [body            => $body],
-                                      [close_delimiter => "\n"]]);
+        $errors ++ unless
+            $checker -> match ($subject, [[$key            => $subject],
+                                          [open_delimiter  => $token],
+                                          [body            => $body],
+                                          [close_delimiter => "\n"]],
+                               test    => $reason);
     }
 
     foreach my $fail (@fail) {
         my ($subject, $reason) = @$fail;
-        $checker -> no_match ($subject, reason => $reason);
+        $errors ++ unless
+            $checker -> no_match ($subject, reason => $reason);
     }
+
+    BAIL_OUT if $errors && $ENV {BAILOUT_EARLY};
 }
 
 Test::NoWarnings::had_no_warnings () if $r;
