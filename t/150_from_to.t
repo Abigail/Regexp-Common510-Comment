@@ -119,6 +119,20 @@ while (@data) {
         ["$open$close$BIG"           =>  "body after close delimiter"]
         ;
 
+    if (length ($open) > 1) {
+        my $Open = $open;
+        $Open =~ s/^.\K/ /;
+        push @fail => ["$Open$close"        => "garbled open delimiter"],
+                      ["$Open $W $W $close" => "garbled open delimiter"];
+    }
+    if (length ($close) > 1) {
+        my $Close = $close;
+        $Close =~ s/(.)$/ $1/;
+        push @fail => ["$open$Close"        => "garbled close delimiter"],
+                      ["$open $W $W $Close" => "garbled close delimiter"];
+    }
+
+
     run_tests
         pass          => \@pass,
         fail          => \@fail,
