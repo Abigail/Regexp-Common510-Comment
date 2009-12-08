@@ -15,26 +15,19 @@ my $NO_NL = $] >= 5.011001 ? '\N' : '[^\n]';
 # Return a pattern which starts with a specific token, and lasts
 # up till the first following newline.
 #
-sub eol ($$) {
-    my $lang  = shift;
-    my $token = shift;
+sub eol ($) {
+    my $open = shift;
 
-    my $key   = "Comment__" . name2key $lang;
-
-    "(?k<$key>:"  .
-         "(?k<open_delimiter>:$token)"  .
-         "(?k<body>:$NO_NL*)"           .
-         "(?k<close_delimiter>:\n)"     .
-    ")";
+    "(?k<open_delimiter>:$open)" .
+    "(?k<body>:$NO_NL*)"         .
+    "(?k<close_delimiter>:\n)";
 }
 
 #
 # Return a pattern that starts and ends with specific tokens.
 #
-sub from_to ($$$) {
-    my ($lang, $open, $close) = @_;
-
-    my $key   = "Comment__" . name2key $lang;
+sub from_to ($$) {
+    my ($open, $close) = @_;
 
     my $body;
     if (length ($close) == 1) {
@@ -46,11 +39,9 @@ sub from_to ($$$) {
         $body = "[^$f]*(?:$f(?!$l)[^$f]*)*";
     }
 
-    return "(?k<$key>:"  .
-                "(?k<open_delimiter>:\Q$open\E)"   .
-                "(?k<body>:$body)"                 .
-                "(?k<close_delimiter>:\Q$close\E)" .
-           ")";
+    "(?k<open_delimiter>:\Q$open\E)"   .
+    "(?k<body>:$body)"                 .
+    "(?k<close_delimiter>:\Q$close\E)";
 }
 
 
@@ -125,14 +116,18 @@ my @from_to = (
 
 while (@eol) {
     my ($lang, $token) =   splice @eol, 0, 2;
+    my $pattern        =   eol $token;
     pattern Comment    => $lang,
-            -pattern   =>  eol $lang => $token,
+            -pattern   => "(?k<comment>:$pattern)",
+    ;
 }
 
 while (@from_to) {
     my ($lang, $open, $close) =   splice @from_to, 0, 3;
+    my $pattern               =   from_to $open => $close;
     pattern Comment           => $lang,
-            -pattern          =>  from_to $lang => $open, $close;
+            -pattern          => "(?k<comment>:$pattern)",
+    ;
 }
 
 1;

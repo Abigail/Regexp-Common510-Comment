@@ -14,14 +14,6 @@ our $r = eval "require Test::NoWarnings; 1";
 
 use Regexp::Common510 'Comment';
 
-my %name2key = (
-   'beta-Juliet'     => 'beta_Juliet',
-   'Crystal Report'  => 'Crystal_Report',
-   'PL/B'            => 'PL_B',
-   'Q-BAL'           => 'Q_BAL',
-   'ZZT-OOP'         => 'ZZT_OOP',
-);
-
 my @data = (
     ABC              =>  '\\',
     Ada              =>  '--',
@@ -80,7 +72,7 @@ my $BIG = (join "" => 'a' .. 'z', 'A' .. 'Z', 0 .. 9) x 20;
 while (@data) {
     my ($lang, $token) = splice @data, 0, 2;
 
-    my $key      = "Comment__" . ($name2key {$lang} // $lang);
+    my $key      = "comment";
 
     my $pattern1 = RE Comment => $lang;
     my $pattern2 = RE Comment => $lang, -Keep => 1;
