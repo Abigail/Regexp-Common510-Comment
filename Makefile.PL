@@ -38,7 +38,7 @@ my %args = (
             'strict'             =>          0,
             'warnings'           =>          0,
             'Test::More'         =>          0.88,
-            'Test::Regexp'       => 2009120501,
+            'Test::Regexp'       => 2009120801,
         },
         resources        => {
             repository   => $REPOSITORY,
