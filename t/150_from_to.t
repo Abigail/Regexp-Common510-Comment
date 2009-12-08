@@ -110,7 +110,7 @@ while (@data) {
     my $wack = $lang eq '*W' ? '??' : '!!';
     push @fail => 
         ["$open$close$close"         =>  "extra close delimiter"],
-        ["$open foo bar"             =>  "no close delimiter"],
+        ["$open $W $W"               =>  "no close delimiter"],
         ["$open $wack"               =>  "no close delimiter"],
         ["$open"                     =>  "no close delimiter"],
         ["$open $W $W $close\n"      =>  "trailing newline"],
