@@ -106,26 +106,17 @@ while (@data) {
         ["$open$close$BIG"           =>  "body after close delimiter"]
         ;
 
-    my $errors = 0;
 
-    foreach my $test (@pass) {
-        my ($body, $reason) = @$test;
-        my $subject = "$open$body$close";
-        $errors ++ unless
-            $checker -> match ($subject, [[$key            => $subject],
-                                          [open_delimiter  => $open],
-                                          [body            => $body],
-                                          [close_delimiter => $close]],
-                               test    => $reason);
-    }
+    run_tests
+        pass          => \@pass,
+        fail          => \@fail,
+        checker       => $checker,
+        make_subject  => sub {$open . $_ [0] . $close},
+        make_captures => sub {[[$key            => $open . $_ [0] . $close],
+                               [open_delimiter  => $open],
+                               [body            => $_ [0]],
+                               [close_delimiter => $close]]};
 
-    foreach my $test (@fail) {
-        my ($subject, $reason) = @$test;
-        $errors ++ unless
-            $checker -> no_match ($subject, reason => $reason);
-    }
-
-    BAIL_OUT if $errors && $ENV {BAILOUT_EARLY};
 }
 
 Test::NoWarnings::had_no_warnings () if $r;

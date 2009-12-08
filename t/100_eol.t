@@ -140,26 +140,15 @@ while (@data) {
                       ["$Token foo bar\n" => "garbled opening delimiter"];
     }
 
-    my $errors = 0;
-
-    foreach my $test (@pass) {
-        my ($body, $reason) = @$test;
-        my $subject = "$token$body\n";
-        $errors ++ unless
-            $checker -> match ($subject, [[$key            => $subject],
-                                          [open_delimiter  => $token],
-                                          [body            => $body],
-                                          [close_delimiter => "\n"]],
-                               test    => $reason);
-    }
-
-    foreach my $fail (@fail) {
-        my ($subject, $reason) = @$fail;
-        $errors ++ unless
-            $checker -> no_match ($subject, reason => $reason);
-    }
-
-    BAIL_OUT if $errors && $ENV {BAILOUT_EARLY};
+    run_tests
+        pass          => \@pass,
+        fail          => \@fail,
+        checker       => $checker,
+        make_subject  => sub {$token . $_ [0] . "\n"},
+        make_captures => sub {[[$key            => $token . $_ [0] . "\n"],
+                               [open_delimiter  => $token],
+                               [body            => $_ [0]],
+                               [close_delimiter => "\n"]]};
 }
 
 Test::NoWarnings::had_no_warnings () if $r;
