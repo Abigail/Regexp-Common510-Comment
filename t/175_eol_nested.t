@@ -7,10 +7,10 @@ use warnings;
 no  warnings 'syntax';
 
 use Test::More 0.88;
-use Test::Regexp 2009120802;
+use Test::Regexp 2009120902;
 use t::Common;
 
-our $r = eval "require Test::NoWarnings; 1";
+our $r = eval "require Test-::NoWarnings; 1";
 
 use Regexp::Common510 'Comment';
 
@@ -105,14 +105,14 @@ while (@data) {
         fail                  => \@fail,
         checker               => $checker,
         ghost_name_captures   => 1,
-        filter_undef          => 1,
+        ghost_num_captures    => 1,
         make_subject          => sub {$open . $_ [0] . $close},
         make_captures         => sub {
-            [[undef ()        => $open . $_ [0] . $close],
-              undef,
-              undef,
-              undef,
-             [$key            => $open . $_ [0] . $close],
+            [[comment         => $open . $_ [0] . $close],
+             [open_delimiter  => undef],
+             [body            => undef],
+             [close_delimiter => undef],
+             [undef ()        => $open . $_ [0] . $close],
              [open_delimiter  => $open],
              [body            => $_ [0]],
              [close_delimiter => $close]]

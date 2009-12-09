@@ -7,10 +7,10 @@ use warnings;
 no  warnings 'syntax';
 
 use Test::More 0.88;
-use Test::Regexp 2009120801;
+use Test::Regexp 2009120902;
 use t::Common;
 
-our $r = eval "require Test::NoWarnings; 1";
+our $r = eval "require Test-::NoWarnings; 1";
 
 use Regexp::Common510 'Comment';
 
@@ -87,16 +87,23 @@ while (@data) {
     }
 
     run_tests
-        pass          => \@pass,
-        fail          => \@fail,
-        checker       => $checker,
-        filter_undef  => 1,
-        make_subject  => sub {$token . $_ [0] . "\n"},
-        make_captures => sub {[[comment         => $token . $_ [0] . "\n"],
-                               [open_delimiter  => $token],
-                               [body            => $_ [0]],
-                               [close_delimiter => "\n"],
-                               ]};
+        pass                  => \@pass,
+        fail                  => \@fail,
+        checker               => $checker,
+        ghost_name_captures   =>  1,
+        make_subject          => sub {$token . $_ [0] . "\n"},
+        make_captures         => sub {
+            [[comment         => $token . $_ [0] . "\n"],
+             [open_delimiter  => $token],
+             [body            => $_ [0]],
+             [close_delimiter => "\n"],
+             [undef ()        => undef],
+             [open_delimiter  => undef],
+             [body            => undef],
+             [close_delimiter => undef],
+            ]
+        },
+        ;
 }
 
 Test::NoWarnings::had_no_warnings () if $r;
