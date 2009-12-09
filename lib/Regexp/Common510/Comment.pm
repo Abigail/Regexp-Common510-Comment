@@ -140,14 +140,14 @@ my @eol_nested = (
 # Assumes tags are at least 2 characters long.
 #
 sub nested {
-    my ($open, $close) = @_;
+    my ($open, $close, %arg) = @_;
 
     my $fo  =           substr $open,  0, 1;
     my $lo  = quotemeta substr $open,  1;
     my $fc  =           substr $close, 0, 1;
     my $lc  = quotemeta substr $close, 1;
 
-    my $tag = unique_name;
+    my $tag = $arg {tag} || unique_name;
 
     "(?<$tag>" .
         "(?k<open_delimiter>:[$fo]$lo)"  .
@@ -187,15 +187,26 @@ while (@eol_from_to) {
 while (@eol_nested) {
     my ($lang, $token, $open, $close) = splice @eol_nested, 0, 4;
 
-    my $pattern1 = eol    $token,
-    my $pattern2 = nested $open => $close;
+    my $tag      = unique_name;
+
+    my $eol_pattern    = eol    $token;
+    my $nested_pattern = nested $open => $close, tag => $tag;
 
     #
-    # The (?:) will be replaced by (?|) once all the regular expression
-    # bugs are fixed.
+    # There will be an additional (?<$tag>) in the 'eol' alternation
+    # as a work around [See bug #71136].
+    # There's some trickery to make the capture be undef in %- when taking 
+    # this alternative.
+    #
+    $eol_pattern = "(?<$tag>(*FAIL))?$eol_pattern";
+
+    #
+    # Because we repeat a tag name, and there's recursion on this name in
+    # $nested_pattern, it's vital $nested_pattern is to the left of
+    # $eol_pattern.
     #
     pattern Comment  => $lang,
-            -pattern => "(?k<comment>:(?:(?:$pattern1)|(?:$pattern2)))",
+            -pattern => "(?k<comment>:(?|$nested_pattern|$eol_pattern))",
     ;
 }
 

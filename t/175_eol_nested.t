@@ -7,7 +7,7 @@ use warnings;
 no  warnings 'syntax';
 
 use Test::More 0.88;
-use Test::Regexp 2009120902;
+use Test::Regexp 2009120903;
 use t::Common;
 
 our $r = eval "require Test::NoWarnings; 1";
@@ -109,9 +109,6 @@ while (@data) {
         make_subject          => sub {$open . $_ [0] . $close},
         make_captures         => sub {
             [[comment         => $open . $_ [0] . $close],
-             [open_delimiter  => undef],
-             [body            => undef],
-             [close_delimiter => undef],
              [undef ()        => $open . $_ [0] . $close],
              [open_delimiter  => $open],
              [body            => $_ [0]],
