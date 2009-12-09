@@ -128,6 +128,13 @@ my @eol_from_to = (
 );
 
 
+my @nested = (
+    Caml             =>  '(*',  '*)',
+   'Modula-2'        =>  '(*',  '*)',
+   'Modula-3'        =>  '(*',  '*)',
+);
+
+
 my @eol_nested = (
     Dylan            =>  '//',       '/*',  '*/',
 #   Hugo             =>  '!(?!\\\\', '!\\', '\\!',
@@ -181,6 +188,17 @@ while (@eol_from_to) {
     my  $pattern2             =   from_to $open => $close;
     pattern Comment           => $lang,
             -pattern          => "(?k<comment>:(?|$pattern1|$pattern2))",
+    ;
+}
+
+
+while (@nested) {
+    my ($lang, $open, $close) = splice @nested, 0, 3;
+
+    my $pattern = nested $open => $close;
+
+    pattern Comment  => $lang,
+            -pattern => "(?k<comment>:$pattern)",
     ;
 }
 

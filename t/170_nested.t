@@ -16,7 +16,10 @@ use Regexp::Common510 'Comment';
 
 my @data = (
     Dylan            =>  '/*',      '*/',
+    Caml             =>  '(*',      '*)',
     Haskell          =>  '{-',      '-}',
+   'Modula-2'        =>  '(*',      '*)',
+   'Modula-3'        =>  '(*',      '*)',
 #   Hugo             =>  '!\\',     '\\!',
     SLIDE            =>  '(*',      '*)',
 );
@@ -42,6 +45,14 @@ while (@data) {
     my @pass;  # Only bodies.
     my @fail;  # Complete subjects.
 
+    my $nest = $W;
+       $nest = "$open$nest$close" for 1 .. 100;
+
+    my $nest7 = $W;
+    my $nest9 = $W;
+       $nest7 = "$open$nest7$close" for 1 .. 7;
+       $nest9 = "$open$nest9$close" for 1 .. 9;
+
     push @pass => 
         [""                      =>  "empty body"],
         ["$W $W"                 =>  "standard body"],
@@ -55,7 +66,10 @@ while (@data) {
         ["*"                     =>  "body is a star"],
         ["$open$close"           =>  "simple nested"],
         ["$W $open $W $close $W" =>  "nested"],
+        [$nest                   =>  "deeply nested"],
+        ["$nest7 $W $nest9"      =>  "double nested"],
         ;
+
 
     push @fail => 
         ["$open"                 =>  "no close delimiters"],
