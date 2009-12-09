@@ -19,6 +19,7 @@ my @data = (
     Haskell          =>  '--',
     Haskell          =>  '---',
     Haskell          =>  '--------------',
+    Hugo             =>  '!',
     SLIDE            =>  '#',
 );
 
@@ -78,6 +79,12 @@ while (@data) {
     push @fail => ["#\n"        => "wrong opening delimiter"],
                   ["# \n"       => "wrong opening delimiter"]
                   unless $token eq '#';
+
+    if ($lang eq 'Hugo') {
+        push @fail => ["!\\ \n"   => "backslash follows !"],
+                      ["!\\ $W\n" => "backslash follows !"],
+        ;
+    }
 
     if (length ($token) > 1) {
         my $Token = $token;

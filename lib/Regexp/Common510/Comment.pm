@@ -136,10 +136,10 @@ my @nested = (
 
 
 my @eol_nested = (
-    Dylan            =>  '//',       '/*',  '*/',
-#   Hugo             =>  '!(?!\\\\', '!\\', '\\!',
-    Haskell          =>  '-{2,}',    '{-',  '-}',
-    SLIDE            =>  '#',        '(*',  '*)',
+    Dylan            =>  '//',        '/*',  '*/',
+    Haskell          =>  '-{2,}',     '{-',  '-}',
+    Hugo             =>  '!(?!\\\\)', '!\\', '\\!',
+    SLIDE            =>  '#',         '(*',  '*)',
 );
 
 
@@ -149,19 +149,19 @@ my @eol_nested = (
 sub nested {
     my ($open, $close, %arg) = @_;
 
-    my $fo  =           substr $open,  0, 1;
+    my $fo  = quotemeta substr $open,  0, 1;
     my $lo  = quotemeta substr $open,  1;
-    my $fc  =           substr $close, 0, 1;
+    my $fc  = quotemeta substr $close, 0, 1;
     my $lc  = quotemeta substr $close, 1;
 
     my $tag = $arg {tag} || unique_name;
 
     "(?<$tag>" .
-        "(?k<open_delimiter>:[$fo]$lo)"  .
+        "(?k<open_delimiter>:$fo$lo)"  .
         "(?k<body>:[^$fo$fc]*"           .
-            "(?:(?:[$fo](?!$lo)|[$fc](?!$lc)|(?&$tag))[^$fo$fc]*)*" .
+            "(?:(?:$fo(?!$lo)|$fc(?!$lc)|(?&$tag))[^$fo$fc]*)*" .
         ")" .
-        "(?k<close_delimiter>:[$fc]$lc)" .
+        "(?k<close_delimiter>:$fc$lc)" .
     ")";
 }
 
