@@ -45,15 +45,21 @@ sub run_tests {
         my $reason   = pop @$test;
         my $subject  = $make_subject  -> (@$test);
         my $captures = $make_captures -> (@$test);
+        my @args;
+        push @args   => test => $reason;
+        push @args   => ghost_name_captures => $arg {ghost_name_captures} || 0;
+        push @args   => ghost_num_captures  => $arg {ghost_num_captures}  || 0;
+        push @args   => filter_undef        => $arg {filter_undef}        || 0;
         $errors ++ unless
-            $checker -> match ($subject, $captures,
-                               test    => $reason);
+            $checker -> match ($subject, $captures, @args);
     }
 
     foreach my $fail (@$fail) {
         my ($subject, $reason) = @$fail;
+        my @args;
+        push @args   => reason => $reason;
         $errors ++ unless
-            $checker -> no_match ($subject, reason => $reason);
+            $checker -> no_match ($subject, @args);
     }
 
     BAIL_OUT if $errors && $ENV {BAILOUT_EARLY};

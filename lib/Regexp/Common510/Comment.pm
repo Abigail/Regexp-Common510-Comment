@@ -7,7 +7,7 @@ no  warnings 'syntax';
 
 our $VERSION = '2009120201';
 
-use Regexp::Common510 -api => 'pattern', 'name2key';
+use Regexp::Common510 -api => 'pattern', 'unique_name';
 
 my $NO_NL = $] >= 5.011001 ? '\N' : '[^\n]';
 
@@ -128,6 +128,37 @@ my @eol_from_to = (
 );
 
 
+my @eol_nested = (
+    Dylan            =>  '//',       '/*',  '*/',
+#   Hugo             =>  '!(?!\\\\', '!\\', '\\!',
+    Haskell          =>  '-{2,}',    '{-',  '-}',
+    SLIDE            =>  '#',        '(*',  '*)',
+);
+
+
+#
+# Assumes tags are at least 2 characters long.
+#
+sub nested {
+    my ($open, $close) = @_;
+
+    my $fo  =           substr $open,  0, 1;
+    my $lo  = quotemeta substr $open,  1;
+    my $fc  =           substr $close, 0, 1;
+    my $lc  = quotemeta substr $close, 1;
+
+    my $tag = unique_name;
+
+    "(?<$tag>" .
+        "(?k<open_delimiter>:[$fo]$lo)"  .
+        "(?k<body>:[^$fo$fc]*"           .
+            "(?:(?:[$fo](?!$lo)|[$fc](?!$lc)|(?&$tag))[^$fo$fc]*)*" .
+        ")" .
+        "(?k<close_delimiter>:[$fc]$lc)" .
+    ")";
+}
+
+
 while (@eol) {
     my ($lang, $token) =   splice @eol, 0, 2;
     my  $pattern       =   eol $token;
@@ -150,6 +181,21 @@ while (@eol_from_to) {
     my  $pattern2             =   from_to $open => $close;
     pattern Comment           => $lang,
             -pattern          => "(?k<comment>:(?|$pattern1|$pattern2))",
+    ;
+}
+
+while (@eol_nested) {
+    my ($lang, $token, $open, $close) = splice @eol_nested, 0, 4;
+
+    my $pattern1 = eol    $token,
+    my $pattern2 = nested $open => $close;
+
+    #
+    # The (?:) will be replaced by (?|) once all the regular expression
+    # bugs are fixed.
+    #
+    pattern Comment  => $lang,
+            -pattern => "(?k<comment>:(?:(?:$pattern1)|(?:$pattern2)))",
     ;
 }
 
