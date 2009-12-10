@@ -19,11 +19,24 @@ my @data = (
     ""               =>  '{',       '*)',
     ""               =>  '(*',      '}',
     ""               =>  '{',       '}',
+    "Alice"          =>  '{',       '}',
+    "Delphi"         =>  '//',      "\n",
+    "Delphi"         =>  '{',       '}',
+    "Delphi"         =>  '(*',      '*)',
+    "Free"           =>  '//',      "\n",
+    "Free"           =>  '{',       '}',
+    "Free"           =>  '(*',      '*)',
+    "GPC"            =>  '//',      "\n",
+    "GPC"            =>  '{',       '}',
+    "GPC"            =>  '(*',      '*)',
     "ISO"            =>  '(*',      '*)',
     "ISO"            =>  '{',       '*)',
     "ISO"            =>  '(*',      '}',
     "ISO"            =>  '{',       '}',
-    "Alice"          =>  '{',       '}',
+    "Workshop"       =>  '{',       '}',
+    "Workshop"       =>  '(*',      '*)',
+    "Workshop"       =>  '/*',      '*/',
+    "Workshop"       =>  '"',       '"',
 );
 
 my $BIG = (join "" => 'a' .. 'z', 'A' .. 'Z', 0 .. 9) x 20;
@@ -62,13 +75,19 @@ while (@data) {
         ["****"             =>  "body is stars"],
         ;
 
-    if ($flavour eq 'Alice') {
-        push @fail => ["\n"               =>  "body is newline"],
-        ;
-    }
-    else {
-        push @pass => ["\n"               =>  "body is newline"],
-        ;
+    given ($flavour) {
+        when (["Alice"]) {
+            push @fail => ["\n"     =>  "body is newline"],
+            ;
+        }
+        when (["Delphi", "Free", "GPC",]) {
+            # Newlines will be dealt with close delimiter fail tests.
+            ;
+        }
+        default {
+            push @pass => ["\n"     =>  "body is newline"],
+            ;
+        }
     }
 
     if ($open ne $close) {

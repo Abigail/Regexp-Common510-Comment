@@ -239,16 +239,16 @@ pattern  Comment => 'Pascal',
 sub pascal {
     my %arg = @_;
 
-    my $pattern;
+    my @patterns;
     given ($arg {-flavour} // "") {
 
         #
         # http://www.pascal-central.com/docs/iso10206.txt
         #
-        when (/^(?:|ISO)$/) {
-            $pattern = "(?k<open_delimiter>:[{]|\Q(*\E)"         .
-                       "(?k<body>:[^}*]*(?:[*](?![)])[^}*]*)*)"  .
-                       "(?k<close_delimiter>:[}]|\Q*)\E)"
+        when (["", "ISO"]) {
+            @patterns = "(?k<open_delimiter>:[{]|\Q(*\E)"         .
+                        "(?k<body>:[^}*]*(?:[*](?![)])[^}*]*)*)"  .
+                        "(?k<close_delimiter>:[}]|\Q*)\E)"
             ;
         }
 
@@ -256,17 +256,47 @@ sub pascal {
         # http://www.templetons.com/brad/alice/language/
         #
         when ("Alice") {
-            $pattern = "(?k<open_delimiter>:[{])"   .
-                       "(?k<body>:[^}\n]*)"         .
-                       "(?k<close_delimiter>:[}])"
+            @patterns = "(?k<open_delimiter>:[{])"   .
+                        "(?k<body>:[^}\n]*)"         .
+                        "(?k<close_delimiter>:[}])"
             ;
         }
+
+        #
+        # http://info.borland.com/techpubs/delphi5/oplg/
+        # http://www.freepascal.org/docs-html/ref/ref.html
+        # http://www.gnu-pascal.de/gpc/
+        #
+        when (["Delphi", "Free", "GPC"]) {
+            push @patterns => eol '//';
+            continue;
+        }
+
+        #
+        # http://docs.sun.com/db/doc/802-5762
+        #
+        when (["Delphi", "Free", "GPC", "Workshop"]) {
+            push @patterns => from_to ('{', '}'),
+                              from_to ('(*', '*)')
+            ;
+            continue;
+        }
+
+        when (["Workshop"]) {
+            push @patterns => from_to ('"',  '"'),
+                              from_to ('/*', '*/'),
+            ;
+        }
+
         default {
-            die "Unknown -flavour '$_'";
+            # Known flavours may fall through to this, hence the 
+            # test for @patterns.
+            die "Unknown -flavour '$_'" unless @patterns;
         }
     }
 
-    "(?k<comment>:$pattern)";
+    local $" = "|";
+    "(?k<comment>:(?|@patterns))";
 }
 
 1;
