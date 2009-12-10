@@ -7,7 +7,7 @@ use warnings;
 no  warnings 'syntax';
 
 use Test::More 0.88;
-use Test::Regexp 2009120801;
+use Test::Regexp 2009121001;
 use t::Common;
 
 our $r = eval "require Test::NoWarnings; 1";
@@ -38,6 +38,8 @@ my @data = (
     PHP              =>  '/*',      '*/',
     Oberon           =>  '(*',      '*)',
    'PL/I'            =>  '/*',      '*/',
+   [SQL => 'MySQL']  =>  '/*',      '*/',
+   [SQL => 'MySQL']  =>  '/*',      ';',
    [SQL => 'PL/SQL'] =>  '/*',      '*/',
     Shelta           =>  ';',       ';',
     Smalltalk        =>  '"',       '"',
@@ -65,7 +67,8 @@ while (@data) {
         ;
 
     if ($open ne $close) {
-        if (-1 == index "$open$open" => $close) {
+        if (-1 == index ("$open$open" => $close) &&
+             !($lang eq 'SQL'  &&  $flavour eq 'MySQL')) {
             push @pass => 
                 [$open              =>  "body consists of opening delimiter"],
                 ["$open$open$open"  =>  "body consists of multiple opening " .
@@ -79,12 +82,13 @@ while (@data) {
                 ;
         }
 
-        if ($close ne '*/') {
-            push @pass => ["/* $open */"  => "C comment"],
+        if ($close eq '*/' ||
+            $lang  eq 'SQL' && $flavour eq 'MySQL') {
+            push @fail => ["$open /* $open */ $close" => "trailing garbage"],
             ;
         }
         else {
-            push @fail => ["$open /* $open */ $close" => "trailing garbage"],
+            push @pass => ["/* $open */"  => "C comment"],
             ;
         }
 
