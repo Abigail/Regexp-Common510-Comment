@@ -356,9 +356,10 @@ sub sql {
         when (["MySQL"]) {
             push @patterns => eol '#|-- ';
             push @patterns =>
-               q {(?k<open_delimiter>:/[*])}                                   .
-               q {(?k<body>:[^"';*]*(?:(?:"[^"]*"|'[^']'|[*](?!/))[^"';*]*)*)} .
-               q {(?k<close_delimiter>:[*]/|;)};
+                q {(?k<open_delimiter>:/[*])}                       .
+                q {(?k<body>:[^"';*]*}          .
+                     q {(?:(?:"[^"]*"|'[^']*'|[*](?!/))[^"';*]*)*)} .
+                q {(?k<close_delimiter>:[*]/|;)};
         }
 
         #

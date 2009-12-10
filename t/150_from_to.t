@@ -10,7 +10,7 @@ use Test::More 0.88;
 use Test::Regexp 2009121001;
 use t::Common;
 
-our $r = eval "require Test::NoWarnings; 1";
+our $r = eval "require Test-::NoWarnings; 1";
 
 use Regexp::Common510 'Comment';
 
@@ -89,6 +89,18 @@ while (@data) {
         }
         else {
             push @pass => ["/* $open */"  => "C comment"],
+            ;
+        }
+
+        if (($close ne '*/' || $lang  eq 'SQL' && $flavour eq 'MySQL') &&
+             $lang ne 'Algol 60') {
+            push @pass => 
+                [" '*/' "          =>  "single quoted */"],
+                [' "*/" '          =>  "double quoted */"],
+                [" '; ' "          =>  "single quoted ; "],
+                [' "; " '          =>  "double quoted ; "],
+                [q { '*/ $W' ';'}  => "multiple escapes"],
+                [q { "*/ $W" ';'}  => "multiple escapes"],
             ;
         }
 
