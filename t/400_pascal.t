@@ -39,8 +39,6 @@ my @data = (
     "Workshop"       =>  '"',       '"',
 );
 
-my $BIG = (join "" => 'a' .. 'z', 'A' .. 'Z', 0 .. 9) x 20;
-
 while (@data) {
     my ($flavour, $open, $close) = splice @data, 0, 3;
 

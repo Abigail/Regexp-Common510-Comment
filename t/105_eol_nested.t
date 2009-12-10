@@ -23,8 +23,6 @@ my @data = (
     SLIDE            =>  '#',
 );
 
-my $BIG = (join "" => 'a' .. 'z', 'A' .. 'Z', 0 .. 9) x 20;
-
 while (@data) {
     my ($lang, $token) = splice @data, 0, 2;
 

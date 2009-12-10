@@ -11,7 +11,7 @@ use Tie::Scalar;
 use Exporter ();
 
 our @ISA    = qw [Tie::StdScalar Exporter];
-our @EXPORT = qw [$W run_tests];
+our @EXPORT = qw [$W $BIG run_tests];
 
 our $ams = eval "require Acme::MetaSyntactic; 1";
 
@@ -30,6 +30,7 @@ sub FETCH {my $_ = $random [rand @random]; s/_+/ /g; $_}
 
 tie our $W => __PACKAGE__;
 
+our $BIG = (join "" => 'a' .. 'z', 'A' .. 'Z', 0 .. 9) x 20;
 
 sub run_tests {
     my %arg           = @_;
