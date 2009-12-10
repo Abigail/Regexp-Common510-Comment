@@ -29,8 +29,6 @@ my $BIG = (join "" => 'a' .. 'z', 'A' .. 'Z', 0 .. 9) x 20;
 while (@data) {
     my ($lang, $open, $close) = splice @data, 0, 3;
 
-    my $key      = "comment";
-
     my $pattern1 = RE Comment => $lang;
     my $pattern2 = RE Comment => $lang, -Keep => 1;
     ok $pattern1, "Got a pattern for $lang: qr {$pattern1}";

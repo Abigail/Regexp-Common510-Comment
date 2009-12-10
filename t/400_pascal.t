@@ -44,8 +44,6 @@ my $BIG = (join "" => 'a' .. 'z', 'A' .. 'Z', 0 .. 9) x 20;
 while (@data) {
     my ($flavour, $open, $close) = splice @data, 0, 3;
 
-    my $key      = "comment";
-
     my $pattern1 = RE Comment => 'Pascal', -flavour => $flavour;
     my $pattern2 = RE Comment => 'Pascal', -flavour => $flavour, -Keep => 1;
     ok $pattern1, "Got a pattern for Pascal (-flavour => $flavour): "      .
@@ -160,7 +158,7 @@ while (@data) {
         fail          => \@fail,
         checker       => $checker,
         make_subject  => sub {$open . $_ [0] . $close},
-        make_captures => sub {[[$key            => $open . $_ [0] . $close],
+        make_captures => sub {[[comment         => $open . $_ [0] . $close],
                                [open_delimiter  => $open],
                                [body            => $_ [0]],
                                [close_delimiter => $close]]};

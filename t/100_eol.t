@@ -85,8 +85,6 @@ my $BIG = (join "" => 'a' .. 'z', 'A' .. 'Z', 0 .. 9) x 20;
 while (@data) {
     my ($lang, $token) = splice @data, 0, 2;
 
-    my $key      = "comment";
-
     my $pattern1 = RE Comment => $lang;
     my $pattern2 = RE Comment => $lang, -Keep => 1;
     ok $pattern1, "Got a pattern ($pattern1)";
@@ -150,7 +148,7 @@ while (@data) {
         fail          => \@fail,
         checker       => $checker,
         make_subject  => sub {$token . $_ [0] . "\n"},
-        make_captures => sub {[[$key            => $token . $_ [0] . "\n"],
+        make_captures => sub {[[comment         => $token . $_ [0] . "\n"],
                                [open_delimiter  => $token],
                                [body            => $_ [0]],
                                [close_delimiter => "\n"]]};
