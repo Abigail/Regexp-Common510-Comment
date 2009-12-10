@@ -11,8 +11,11 @@ use Tie::Scalar;
 use Exporter ();
 use Regexp::Common510 -api => 'RE';
 
-our @ISA    = qw [Tie::StdScalar Exporter];
-our @EXPORT = qw [$W $BIG run_tests parse_lang];
+our @ISA     = qw [Tie::StdScalar Exporter];
+our @EXPORT  = qw [$W $BIG run_tests parse_lang];
+
+my  $LANG    = "";
+my  $FLAVOUR = "";
 
 our $ams = eval "require Acme::MetaSyntactic; 1";
 
@@ -33,7 +36,18 @@ tie our $W => __PACKAGE__;
 
 our $BIG = (join "" => 'a' .. 'z', 'A' .. 'Z', 0 .. 9) x 20;
 
-sub parse_lang ($) {ref $_ [0] ? ($_ [0] [0], $_ [0] [1] // "") : ($_ [0], "");}
+sub parse_lang ($) {
+    $LANG    = "";
+    $FLAVOUR = "";
+    if (ref $_ [0]) {
+        $LANG    = $_ [0] [0];
+        $FLAVOUR = $_ [0] [1] // "";
+    }
+    else {
+        $LANG    = $_ [0];
+    }
+    ($LANG, $FLAVOUR);
+}
 
 sub run_tests {
     my %arg           = @_;
