@@ -30,7 +30,13 @@ else {
                   waldo foo quux xyzzy baz bar];
 }
 
-sub FETCH {my $_ = $random [rand @random]; s/_+/ /g; $_}
+sub FETCH {
+  start:
+    my $_ = $random [rand @random];
+    s/_+/ /g;
+    goto start if $LANG eq 'Algol 68' && /^co(?:mment)?$/;
+    $_
+}
 
 tie our $W => __PACKAGE__;
 
