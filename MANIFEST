@@ -7,6 +7,7 @@ t/100_eol.t
 t/105_eol_nested.t
 t/150_from_to.t
 t/170_nested.t
+t/400_pascal.t
 t/950_pod.t
 t/960_pod_coverage.t
 t/990_kwalitee.t

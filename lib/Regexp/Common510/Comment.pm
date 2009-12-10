@@ -52,6 +52,7 @@ my @eol = (
     Advsys           =>  ';',
     Alan             =>  '--',
     awk              =>  '#',
+    BASIC            =>  'REM',
    'beta-Juliet'     =>  '//',
     CLU              =>  '%',
     CQL              =>  ';',
@@ -226,6 +227,46 @@ while (@eol_nested) {
     pattern Comment  => $lang,
             -pattern => "(?k<comment>:(?|$nested_pattern|$eol_pattern))",
     ;
+}
+
+
+pattern  Comment => 'Pascal',
+        -config  => {-flavour => undef},
+        -pattern => \&pascal,
+        ;
+
+
+sub pascal {
+    my %arg = @_;
+
+    my $pattern;
+    given ($arg {-flavour} // "") {
+
+        #
+        # http://www.pascal-central.com/docs/iso10206.txt
+        #
+        when (/^(?:|ISO)$/) {
+            $pattern = "(?k<open_delimiter>:[{]|\Q(*\E)"         .
+                       "(?k<body>:[^}*]*(?:[*](?![)])[^}*]*)*)"  .
+                       "(?k<close_delimiter>:[}]|\Q*)\E)"
+            ;
+        }
+
+        #
+        # http://www.templetons.com/brad/alice/language/
+        #
+        when ("Alice") {
+            $pattern = "(?k<open_delimiter>:[{])"   .
+                       "(?k<body>:[^}\n]*)"         .
+                       "(?k<close_delimiter>:[}])"
+            ;
+        }
+        default {
+            die "Unknown -flavour '$_'";
+        }
+    }
+
+    "(?k<comment>:$pattern)";
 }
 
 1;

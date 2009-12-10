@@ -22,6 +22,7 @@ my @data = (
     Advsys           =>  ';',
     Alan             =>  '--',
     awk              =>  '#',
+    BASIC            =>  'REM',
    'beta-Juliet'     =>  '//',
    'C++'             =>  '//',
    'C#'              =>  '//',
