@@ -52,7 +52,6 @@ my @eol = (
     Advsys           =>  ';',
     Alan             =>  '--',
     awk              =>  '#',
-    BASIC            =>  'REM',
    'beta-Juliet'     =>  '//',
     CLU              =>  '%',
     CQL              =>  ';',
@@ -229,12 +228,14 @@ while (@eol_nested) {
     ;
 }
 
-
+#
+# There are many implementations (flavours) of Pascal, with different
+# syntaxes comments. We'll default to the ISO standard.
+#
 pattern  Comment => 'Pascal',
         -config  => {-flavour => undef},
         -pattern => \&pascal,
         ;
-
 
 sub pascal {
     my %arg = @_;
@@ -298,6 +299,46 @@ sub pascal {
     local $" = "|";
     "(?k<comment>:(?|@patterns))";
 }
+
+#
+# There are many implementations (flavours) of BASIC, with different
+# syntaxes comments.
+#
+pattern  Comment => 'BASIC',
+        -config  => {-flavour => undef},
+        -pattern => \&basic,
+        ;
+
+sub basic {
+    my %arg = @_;
+
+    my @patterns;
+
+    given ($arg {-flavour} // "") {
+        when ([""]) {
+            @patterns = eol "REM";
+        }
+
+        #
+        # http://www.rainingdata.com/products/beta/docs/mve/50/
+        #                                          ReferenceManual/Basic.pdf
+        #
+        when (["mvEnterprise"]) {
+            @patterns = eol "[*!]|REM";
+        }
+
+        default {
+            # Known flavours may fall through to this, hence the 
+            # test for @patterns.
+            die "Unknown -flavour '$_'" unless @patterns;
+        }
+    }
+
+    local $" = "|";
+    "(?k<comment>:(?|@patterns))";
+}
+
+
 
 1;
 
