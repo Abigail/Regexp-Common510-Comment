@@ -406,7 +406,43 @@ pattern Comment  => "INTERCAL",
            ")"
 ;
 
+#
+# http://westein.arb-phys.uni-dortmund.de/~wb/a68s.txt
+# http://www.nunan.fsnet.co.uk/algol68/pame.pdf
+# http://www.algol68.org/
+#
+# Comments are one of the following pairs:
+#     COMMENT   COMMENT
+#     CO        CO
+#     #         #
+#     {         }
+#
+# Case is not clear. http://www.nunan.fsnet.co.uk/algol68/pame.pdf uses
+# all capitals, http://westein.arb-phys.uni-dortmund.de/~wb/a68s.txt lower
+# case (but is offline). The latter also claims CO and COMMENT should be
+# words, and doesn't mention { }.
+#
+# For now, I will use capitals, and allow { }. This one may have flavours
+# in the future.
+# 
+pattern Comment  => 'Algol 68',
+        -pattern => do {
+            my @patterns;
+            push @patterns => from_to ('#',     '#'),
+                              from_to ('{',     '}');
+            push @patterns =>
+                '(?k<open_delimiter>:\bCO\b)'                     .
+                '(?k<body>:[^C]*(?:(?:\BC|C(?!O\b))[^C]*)*)'      .
+                '(?k<close_delimiter>:\bCO\b)',
 
+                '(?k<open_delimiter>:\bCOMMENT\b)'                .
+                '(?k<body>:[^C]*(?:(?:\BC|C(?!OMMENT\b))[^C]*)*)' .
+                '(?k<close_delimiter>:\bCOMMENT\b)',
+            ;
+            local $" = "|";
+            "(?k<comment>:(?|@patterns))";
+        }
+;
 
 1;
 
