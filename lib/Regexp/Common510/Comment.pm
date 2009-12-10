@@ -84,7 +84,6 @@ my @eol = (
     shell            =>  '#',
     slrn             =>  '%',
     SMITH            =>  ';',
-    SQL              =>  '-{2,}',
     Tcl              =>  '#',
     TeX              =>  '%',
     troff            =>  '\\\"',
@@ -124,7 +123,6 @@ my @eol_from_to = (
     Nickle           =>  '#',       '/*',  '*/',
     PEARL            =>  '!',       '/*',  '*/',
     PHP              =>  '#|//',    '/*',  '*/',
-   'PL/SQL'          =>  '--',      '/*',  '*/',
 );
 
 
@@ -325,6 +323,59 @@ sub basic {
         #
         when (["mvEnterprise"]) {
             @patterns = eol "[*!]|REM";
+        }
+
+        default {
+            # Known flavours may fall through to this, hence the 
+            # test for @patterns.
+            die "Unknown -flavour '$_'" unless @patterns;
+        }
+    }
+
+    local $" = "|";
+    "(?k<comment>:(?|@patterns))";
+}
+
+
+pattern  Comment => 'SQL',
+        -config  => {-flavour => undef},
+        -pattern => \&sql,
+        ;
+
+
+sub sql {
+    my %arg = @_;
+
+    my @patterns;
+
+    given ($arg {-flavour} // "") {
+        when ([""]) {
+            @patterns = eol "-{2,}";
+        }
+
+        when (["MySQL"]) {
+            push @patterns => eol '#', eol '-- ';
+            push @patterns =>
+               q {(?k<open_delimiter>:/[*])}                                   .
+               q {(?k<body>:[^"';*]*(?:(?:"[^"]*"|'[^']'|[*](?!/))[^"';*]*)*)} .
+               q {(?k<open_delimiter>:[*]/|;)};
+        }
+
+        #
+        # http://download.oracle.com/docs/cd/B19306_01/server.102/
+        #                                    b14200/sql_elements006.htm
+        #
+        # Note that there may be additional restrictions. Under certain
+        # usage, /* */ comments may not contain a blank line. Under
+        # other usage, -- comments extend to the end of the block instead
+        # the end of the line, as newlines are ignored.
+        #
+        # These restrictions are ignored.
+        #
+        when (["PL/SQL"]) {
+            push @patterns => eol     '--',
+                              from_to '/*' => '*/'
+            ;
         }
 
         default {

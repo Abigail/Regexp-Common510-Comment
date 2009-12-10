@@ -38,7 +38,7 @@ my @data = (
     PHP              =>  '/*',      '*/',
     Oberon           =>  '(*',      '*)',
    'PL/I'            =>  '/*',      '*/',
-   'PL/SQL'          =>  '/*',      '*/',
+   [SQL => 'PL/SQL'] =>  '/*',      '*/',
     Shelta           =>  ';',       ';',
     Smalltalk        =>  '"',       '"',
    '*W'              =>  '||',      '!!',
@@ -47,8 +47,14 @@ my @data = (
 while (@data) {
     my ($lang, $open, $close) = splice @data, 0, 3;
 
-    my $pattern1 = RE Comment => $lang;
-    my $pattern2 = RE Comment => $lang, -Keep => 1;
+    my @args;
+    if (ref $lang) {
+        @args = (-flavour => $$lang [1]);
+        $lang = $$lang [0];
+    }
+
+    my $pattern1 = RE Comment => $lang, @args;
+    my $pattern2 = RE Comment => $lang, @args, -Keep => 1;
     ok $pattern1, "Got a pattern for $lang: qr {$pattern1}";
     ok $pattern2, "Got a keep pattern for $lang: qr {$pattern2}";
 

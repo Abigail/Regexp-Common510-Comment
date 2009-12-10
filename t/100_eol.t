@@ -59,7 +59,6 @@ my @data = (
     PHP                      =>  '//',
    'PL/B'                    =>  '.',
    'PL/B'                    =>  ';',
-   'PL/SQL'                  =>  '--',
     Portia                   =>  '//',
     Python                   =>  '#',
    'Q-BAL'                   =>  '`',
@@ -71,6 +70,7 @@ my @data = (
     shell                    =>  '#',
     slrn                     =>  '%',
     SMITH                    =>  ';', 
+   [SQL => 'PL/SQL']         =>  '--',
     SQL                      =>  '--',
     SQL                      =>  '---',
     SQL                      =>  '----',
@@ -87,20 +87,23 @@ while (@data) {
     my ($lang, $token) = splice @data, 0, 2;
 
     my @args;
+    my $pat_name = $lang;
     if (ref $lang) {
+        $pat_name = $$lang [1] ? "$$lang[0] (-flavour $$lang[1])"
+                               : "$$lang[0] (default -flavour)";
         @args = (-flavour => $$lang [1]);
         $lang = $$lang [0];
     }
 
     my $pattern1 = RE Comment => $lang, @args;
     my $pattern2 = RE Comment => $lang, @args, -Keep => 1;
-    ok $pattern1, "Got a pattern ($pattern1)";
-    ok $pattern2, "Got a keep pattern ($pattern2)";
+    ok $pattern1, "Got a pattern for $pat_name ($pattern1)";
+    ok $pattern2, "Got a keep pattern for $pat_name ($pattern2)";
 
     my $checker = Test::Regexp -> new -> init (
         pattern      => $pattern1,
         keep_pattern => $pattern2,
-        name         => "Comment $lang",
+        name         => "Comment $pat_name",
     );
 
     my @pass;
