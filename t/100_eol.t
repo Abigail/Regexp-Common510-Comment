@@ -41,6 +41,10 @@ my @data = (
     fvwm2                    =>  '#',
     ICON                     =>  '#',
     ILLGOL                   =>  'NB',
+    INTERCAL                 =>  'DO NOT',
+    INTERCAL                 =>  "DON'T",
+    INTERCAL                 =>  "PLEASE NOT",
+    INTERCAL                 =>  "PLEASE DON'T",
     J                        =>  'NB.',
     Java                     =>  '//',
     JavaScript               =>  '//',
@@ -100,15 +104,29 @@ while (@data) {
         [$BIG               =>  "Large body"],
         ["//"               =>  "slashes"],
         [" "                =>  "body is a space"],
-        ["/* $token */"     =>  "C comment with opening delimiter"],
         ;
 
-    if ($lang ne 'SQL' || $flavour) {
-        push @pass => 
-            ["--"                  =>  "SQL comment"],
+    push @pass =>
+            ["--"               =>  "SQL comment"],
+         unless $lang eq 'SQL' && !$flavour;
+
+    if ($lang eq 'INTERCAL') {
+        push @fail =>
             [$token                =>  "repeated opening delimiter"],
             ["$token$token$token"  =>  "repeated opening delimiter"],
-            ;
+        ;
+    }
+    elsif ($lang eq 'SQL' && !$flavour) {
+        push @pass =>
+            ["/* $token */"        =>  "C comment with opening delimiter"],
+        ;
+    }
+    else {
+        push @pass => 
+            [$token                =>  "repeated opening delimiter"],
+            ["$token$token$token"  =>  "repeated opening delimiter"],
+            ["/* $token */"        =>  "C comment with opening delimiter"],
+        ;
     }
 
     push @fail =>
@@ -142,6 +160,19 @@ while (@data) {
         $Token =~ s/^.\K/ /;
         push @fail => ["$Token\n"       => "garbled opening delimiter"],
                       ["$Token $W $W\n" => "garbled opening delimiter"];
+    }
+
+    if ($lang eq 'INTERCAL') {
+        if (!state $seen_intercal ++) {
+            push @fail => ["PLEASE NOTE THIS DOES NOTHING", "Contains DO"],
+                          ["DO NOT DO THIS",                "Contains DO"],
+                          ["DO NOT OPEN PANDORA'S BOX",     "Contains DO"],
+        }
+        if ($token =~ /NOT/) {
+            push @pass => ["E THIS IS NOT A STATEMENT", "Extended start word"],
+                          ["E THE FLYING PIGS",         "Extended start word"],
+            ;
+        }
     }
 
     run_tests

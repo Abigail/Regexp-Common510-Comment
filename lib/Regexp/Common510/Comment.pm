@@ -391,6 +391,22 @@ sub sql {
 }
 
 
+#
+# http://oops.se/~urban/pit/intercal.ps
+#
+# Comments start with [PLEASE \s+][DO[\s*]](NOT|N'T), last till the
+# end of the line, and cannot contain DO.
+#
+pattern Comment  => "INTERCAL",
+        -pattern =>
+           "(?k<comment>:"                                                   .
+               "(?k<open_delimiter>:(?:PLEASE\\s+)?(?:DO\\s*)?(?:NOT|N'T))"  .
+               '(?k<body>:[^D\n]*(?:D(?!O)[^D\n]*)*)'                        .
+               '(?k<close_delimiter>:\n)'                                    .
+           ")"
+;
+
+
 
 1;
 

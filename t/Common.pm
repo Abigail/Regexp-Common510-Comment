@@ -34,7 +34,8 @@ sub FETCH {
   start:
     my $_ = $random [rand @random];
     s/_+/ /g;
-    goto start if $LANG eq 'Algol 68' && /^co(?:mment)?$/;
+    goto start if $LANG eq 'Algol 68' && /^co(?:mment)?$/
+               || $LANG eq 'INTERCAL' && /DO/;
     $_
 }
 
