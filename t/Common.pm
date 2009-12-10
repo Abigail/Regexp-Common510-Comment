@@ -33,7 +33,7 @@ tie our $W => __PACKAGE__;
 
 our $BIG = (join "" => 'a' .. 'z', 'A' .. 'Z', 0 .. 9) x 20;
 
-sub parse_lang ($) {ref $_ [0] ? @{$_ [0]} : $_ [0];}
+sub parse_lang ($) {ref $_ [0] ? ($_ [0] [0], $_ [0] [1] // "") : ($_ [0], "");}
 
 sub run_tests {
     my %arg           = @_;

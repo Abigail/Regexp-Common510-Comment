@@ -70,10 +70,12 @@ my @data = (
     shell                    =>  '#',
     slrn                     =>  '%',
     SMITH                    =>  ';', 
-   [SQL => 'PL/SQL']         =>  '--',
     SQL                      =>  '--',
     SQL                      =>  '---',
     SQL                      =>  '----',
+   [SQL => 'MySQL']          =>  '#',
+   [SQL => 'MySQL']          =>  '-- ',
+   [SQL => 'PL/SQL']         =>  '--',
     Tcl                      =>  '#', 
     TeX                      =>  '%',
     troff                    =>  '\\"',
@@ -109,7 +111,7 @@ while (@data) {
             ;
     }
 
-    push @fail => (
+    push @fail =>
         [$token                    => "only opening delimiter"],
         ["$token $W $W"            => "no trailing newline"],
         ["$token $W \n\n"          => "duplicate newline"],
@@ -117,14 +119,22 @@ while (@data) {
         ["$token $W\n$token $W\n"  => "duplicate comment"],
         ["$token $W\n "            => "trailing space"],
         [" $token $W\n"            => "leading space"],
-    );
+    ;
+
+    if ($lang eq 'SQL' && $flavour eq 'MySQL') {
+        push @fail =>
+            ["--\n"              =>  "Missing space after --"],
+            ["--$W\n"            =>  "Missing space after --"],
+        ;
+    }
+
     if ($lang ne 'Advisor' && $lang ne 'PHP') {
         push @fail => ["//\n"       => "wrong opening delimiter"],
                       ["// foo\n"   => "wrong opening delimiter"]
                       unless $token eq '//';
         push @fail => ["#\n"        => "wrong opening delimiter"],
                       ["# \n"       => "wrong opening delimiter"]
-                      unless $token eq '#';
+                      unless $token eq '#' || $flavour eq 'MySQL';
 
     }
     if (length ($token) > 1) {
