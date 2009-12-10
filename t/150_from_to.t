@@ -16,6 +16,10 @@ use Regexp::Common510 'Comment';
 
 my @data = (
     ALPACA           =>  '/*',      '*/',
+   'Algol 68'        =>  '{',       '}',
+   'Algol 68'        =>  '#',       '#',
+   'Algol 68'        =>  'CO',      'CO',
+   'Algol 68'        =>  'COMMENT', 'COMMENT',
     B                =>  '/*',      '*/',
     BML              =>  '<?_c',    '_c?>',
     C                =>  '/*',      '*/',
@@ -54,17 +58,37 @@ while (@data) {
     my @pass;  # Only bodies.
     my @fail;  # Complete subjects.
 
+    my $arr;
+
     push @pass => 
-        [""                 =>  "empty body"],
-        ["$W $W"            =>  "standard body"],
         ["\n"               =>  "body is newline"],
-        ["$W \x{BB} $W"     =>  "Latin-1 in body"],
-        ["$W \x{4E00} $W"   =>  "Unicode in body"],
-        [$BIG               =>  "Large body"],
         ["--"               =>  "hyphens"],
         ["//"               =>  "slashes"],
-        [" "                =>  "body is a space"]
+        [" "                =>  "body is a space"],
         ;
+
+    if ($lang eq 'Algol 68' && $open =~ /C/) {
+        push @fail =>
+            [""                 =>  "Cannot seperate open/end delimiters"],
+            ["$W $W"            =>  "Word flushed against token"],
+            [" $W \x{BB} $W"    =>  "Word flushed against token"],
+            ["$W \x{4E00} $W "  =>  "Word flushed against token"],
+            [$BIG               =>  "Word flushed against token"],
+        ;
+        push @pass =>
+            [" $W $W "          =>  "standard body"],
+            [" $W \x{BB} $W "   =>  "Latin-1 in body"],
+            [" $W \x{4E00} $W " =>  "Unicode in body"],
+        ;
+    }
+    else {
+        push @pass =>
+            [""                 =>  "empty body"],
+            ["$W $W"            =>  "standard body"],
+            ["$W \x{BB} $W"     =>  "Latin-1 in body"],
+            ["$W \x{4E00} $W"   =>  "Unicode in body"],
+        ;
+    }
 
     if ($open ne $close) {
         if (-1 == index ("$open$open" => $close) &&
@@ -137,6 +161,17 @@ while (@data) {
                       ["$open $W $W $Close" => "garbled close delimiter"];
     }
 
+    if ($lang eq 'Algol 68' && !state $seen ++) {
+        foreach my $open (qw [# { CO COMMENT]) {
+            foreach my $close (qw [# } CO COMMENT]) {
+                next if $open eq $close || $open eq '{' && $close eq '}';
+                push @fail => 
+                    ["$open $close"    =>  'Wrong delimiter match'],
+                    ["$open $W $close" =>  'Wrong delimiter match'],
+                ;
+            }
+        }
+    }
 
     run_tests
         pass          => \@pass,
