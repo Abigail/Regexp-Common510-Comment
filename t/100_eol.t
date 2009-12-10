@@ -101,7 +101,7 @@ while (@data) {
         ["/* $token */"     =>  "C comment with opening delimiter"],
         ;
 
-    if ($lang ne 'SQL') {
+    if ($lang ne 'SQL' || $flavour) {
         push @pass => 
             ["--"                  =>  "SQL comment"],
             [$token                =>  "repeated opening delimiter"],
