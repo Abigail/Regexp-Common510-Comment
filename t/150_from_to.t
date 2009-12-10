@@ -45,24 +45,9 @@ my @data = (
 );
 
 while (@data) {
-    my ($lang, $open, $close) = splice @data, 0, 3;
-
-    my @args;
-    if (ref $lang) {
-        @args = (-flavour => $$lang [1]);
-        $lang = $$lang [0];
-    }
-
-    my $pattern1 = RE Comment => $lang, @args;
-    my $pattern2 = RE Comment => $lang, @args, -Keep => 1;
-    ok $pattern1, "Got a pattern for $lang: qr {$pattern1}";
-    ok $pattern2, "Got a keep pattern for $lang: qr {$pattern2}";
-
-    my $checker = Test::Regexp -> new -> init (
-        pattern      => $pattern1,
-        keep_pattern => $pattern2,
-        name         => "Comment $lang",
-    );
+    my ($lang, $flavour) = parse_lang shift @data;
+    my  $open            =            shift @data;
+    my  $close           =            shift @data;
 
     my @pass;  # Only bodies.
     my @fail;  # Complete subjects.
@@ -140,7 +125,8 @@ while (@data) {
     run_tests
         pass          => \@pass,
         fail          => \@fail,
-        checker       => $checker,
+        language      =>  $lang,
+        flavour       =>  $flavour,
         make_subject  => sub {$open . $_ [0] . $close},
         make_captures => sub {[[comment         => $open . $_ [0] . $close],
                                [open_delimiter  => $open],

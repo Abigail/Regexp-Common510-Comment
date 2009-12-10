@@ -9,9 +9,10 @@ no  warnings 'syntax';
 use Test::More 0.88;
 use Tie::Scalar;
 use Exporter ();
+use Regexp::Common510 -api => 'RE';
 
 our @ISA    = qw [Tie::StdScalar Exporter];
-our @EXPORT = qw [$W $BIG run_tests];
+our @EXPORT = qw [$W $BIG run_tests parse_lang];
 
 our $ams = eval "require Acme::MetaSyntactic; 1";
 
@@ -32,13 +33,39 @@ tie our $W => __PACKAGE__;
 
 our $BIG = (join "" => 'a' .. 'z', 'A' .. 'Z', 0 .. 9) x 20;
 
+sub parse_lang ($) {ref $_ [0] ? @{$_ [0]} : $_ [0];}
+
 sub run_tests {
     my %arg           = @_;
     my $pass          = $arg {pass} || [];
     my $fail          = $arg {fail} || [];
-    my $checker       = $arg {checker},
+    my $checker       = $arg {checker};
     my $make_subject  = $arg {make_subject};
     my $make_captures = $arg {make_captures};
+    my $lang          = $arg {language};
+    my $flavour       = $arg {flavour};
+
+    unless ($checker) {
+        return unless $lang;
+        
+        my $pat_name  = $lang;
+        my @args;
+        if ($flavour) {
+            @args     =        (-flavour => $flavour);
+            $pat_name = "$lang (-flavour => $flavour)";
+        }
+
+        my $pattern1 = RE Comment => $lang, @args;
+        my $pattern2 = RE Comment => $lang, @args, -Keep => 1;
+        ok $pattern1, "Got a pattern for $pat_name ($pattern1)";
+        ok $pattern2, "Got a keep pattern for $pat_name ($pattern2)";
+
+        $checker = Test::Regexp -> new -> init (
+            pattern      => $pattern1,
+            keep_pattern => $pattern2,
+            name         => "Comment $pat_name",
+        );
+    }
 
     my $errors = 0;
 

@@ -24,18 +24,8 @@ my @data = (
 );
 
 while (@data) {
-    my ($lang, $token) = splice @data, 0, 2;
-
-    my $pattern1 = RE Comment => $lang;
-    my $pattern2 = RE Comment => $lang, -Keep => 1;
-    ok $pattern1, "Got a pattern ($pattern1)";
-    ok $pattern2, "Got a keep pattern ($pattern2)";
-
-    my $checker = Test::Regexp -> new -> init (
-        pattern      => $pattern1,
-        keep_pattern => $pattern2,
-        name         => "Comment $lang",
-    );
+    my ($lang, $flavour) = parse_lang shift @data;
+    my  $token           =            shift @data;
 
     my @pass;
     my @fail;
@@ -92,7 +82,8 @@ while (@data) {
     run_tests
         pass                  => \@pass,
         fail                  => \@fail,
-        checker               => $checker,
+        language              =>  $lang,
+        flavour               =>  $flavour,
         ghost_name_captures   =>  1,
         ghost_num_captures    =>  1,
         make_subject          => sub {$token . $_ [0] . "\n"},

@@ -84,27 +84,8 @@ my @data = (
 );
 
 while (@data) {
-    my ($lang, $token) = splice @data, 0, 2;
-
-    my @args;
-    my $pat_name = $lang;
-    if (ref $lang) {
-        $pat_name = $$lang [1] ? "$$lang[0] (-flavour $$lang[1])"
-                               : "$$lang[0] (default -flavour)";
-        @args = (-flavour => $$lang [1]);
-        $lang = $$lang [0];
-    }
-
-    my $pattern1 = RE Comment => $lang, @args;
-    my $pattern2 = RE Comment => $lang, @args, -Keep => 1;
-    ok $pattern1, "Got a pattern for $pat_name ($pattern1)";
-    ok $pattern2, "Got a keep pattern for $pat_name ($pattern2)";
-
-    my $checker = Test::Regexp -> new -> init (
-        pattern      => $pattern1,
-        keep_pattern => $pattern2,
-        name         => "Comment $pat_name",
-    );
+    my ($lang, $flavour) = parse_lang shift @data;
+    my  $token           =            shift @data;
 
     my @pass;
     my @fail;
@@ -156,7 +137,8 @@ while (@data) {
     run_tests
         pass          => \@pass,
         fail          => \@fail,
-        checker       => $checker,
+        language      => $lang,
+        flavour       => $flavour,
         make_subject  => sub {$token . $_ [0] . "\n"},
         make_captures => sub {[[comment         => $token . $_ [0] . "\n"],
                                [open_delimiter  => $token],
