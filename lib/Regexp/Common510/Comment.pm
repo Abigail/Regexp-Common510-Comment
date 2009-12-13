@@ -444,6 +444,43 @@ pattern Comment  => 'Algol 68',
         }
 ;
 
+
+#
+# See rules 91 and 92 of ISO 8879 (SGML).
+# Charles F. Goldfarb: "The SGML Handbook".
+# Oxford: Oxford University Press. 1990. ISBN 0-19-853737-9.
+# Ch. 10.3, pp 390.
+#
+
+sub sgml {
+    my %arg = @_;
+
+    my $MDO = quotemeta $arg {-MDO};
+    my $COM =           $arg {-COM};
+    my $MDC = quotemeta $arg {-MDC};
+
+    my $first;
+    if ($COM eq '--') {   # Optimize common case
+        $first = '[^-]*(?:-[^-]+)*';
+    }
+    else {
+        my $h = quotemeta substr $COM, 0, 1;
+        my $t = quotemeta substr $COM, 1;
+        $first = "[^$h]*(?:$h(?!$t)[^$h]*)*";
+    }
+
+    "(?k<comment>:" .
+        "(?k<MDO>:$MDO)" .
+            "(?k<body>:(?:(?k<COM>:$COM)(?k<first>:$first)$COM\\s*)*)" .
+        "(?k<MDC>:$MDC)" .
+    ")";
+}
+
+pattern Comment  => 'HTML',
+        -pattern => sgml (-MDO => "<!", -MDC => ">", -COM => "--")
+;
+         
+
 1;
 
 __END__
