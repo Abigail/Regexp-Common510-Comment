@@ -459,6 +459,13 @@ sub sgml {
     my $COM =           $arg {-COM};
     my $MDC = quotemeta $arg {-MDC};
 
+    my $SPACE   = chr 32;   # Space
+    my $RS      = chr 10;   # Record separator, aka \r
+    my $RE      = chr 13;   # Record end, aka \n
+    my $SEPCHAR = chr  9;   # Separator, aka \t
+
+    my $WS      = "[$SPACE$RS$RE$SEPCHAR]";
+
     my $first;
     if ($COM eq '--') {   # Optimize common case
         $first = '[^-]*(?:-[^-]+)*';
@@ -469,10 +476,10 @@ sub sgml {
         $first = "[^$h]*(?:$h(?!$t)[^$h]*)*";
     }
 
-    "(?k<comment>:" .
-        "(?k<MDO>:$MDO)" .
-            "(?k<body>:(?:(?k<COM>:$COM)(?k<first>:$first)$COM\\s*)*)" .
-        "(?k<MDC>:$MDC)" .
+    "(?k<comment>:"                                                    .
+        "(?k<MDO>:$MDO)"                                               .
+            "(?k<body>:(?:(?k<COM>:$COM)(?k<first>:$first)$COM$WS*)*)" .
+        "(?k<MDC>:$MDC)"                                               .
     ")";
 }
 
