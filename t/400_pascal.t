@@ -156,8 +156,7 @@ while (@data) {
         fail          => \@fail,
         checker       => $checker,
         make_subject  => sub {$open . $_ [0] . $close},
-        make_captures => sub {[[comment         => $open . $_ [0] . $close],
-                               [open_delimiter  => $open],
+        make_captures => sub {[[open_delimiter  => $open],
                                [body            => $_ [0]],
                                [close_delimiter => $close]]};
 

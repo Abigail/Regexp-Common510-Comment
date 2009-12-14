@@ -94,6 +94,15 @@ sub run_tests {
         my $reason   = pop @$test;
         my $subject  = $make_subject  -> (@$test);
         my $captures = $make_captures -> (@$test);
+
+        #
+        # Add default.
+        #
+        if ($captures && (!@$captures || $$captures [0] [0] ne 'comment') &&
+            $subject) {
+            unshift @$captures => [comment => $subject];
+        }
+
         my @args;
         push @args   => test => $reason;
         push @args   => ghost_name_captures => $arg {ghost_name_captures} || 0;
