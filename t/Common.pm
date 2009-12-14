@@ -12,7 +12,7 @@ use Exporter ();
 use Regexp::Common510 -api => 'RE';
 
 our @ISA     = qw [Tie::StdScalar Exporter];
-our @EXPORT  = qw [$W $BIG run_tests parse_lang];
+our @EXPORT  = qw [$W $BIG run_tests parse_lang no_nl];
 
 my  $LANG    = "";
 my  $FLAVOUR = "";
@@ -54,6 +54,13 @@ sub parse_lang ($) {
         $LANG    = $_ [0];
     }
     ($LANG, $FLAVOUR);
+}
+
+sub no_nl ($) {
+    my $_ = shift;
+    s/\n/\\n/g;
+    s/\r/\\r/g;
+    $_;
 }
 
 sub run_tests {
