@@ -535,7 +535,144 @@ Regexp::Common510::Comment - Abstract
 
 =head1 SYNOPSIS
 
+ use Regexp::Common510 qw [Comment];
+
+ my $html_comment = RE Comment  => 'HTML';
+ /$htm_comment/ and say '$_ contains an HTML comment';
+
+ my $delphi_comment = RE Comment  => 'Pascal'
+                         -flavour => 'Delphi';
+
+ my $perl_comment = RE Comment  => 'Perl',
+                       -Keep    =>  1;
+
+ /$perl_comment/ and say $+ {body}, " was commented out";
+
 =head1 DESCRIPTION
+
+This module is a C<< Regexp::Common510 >> plugin which will provide 
+patterns for the C<< Regexp::Common510 >> framework.
+
+All pattern can be retrieved using the C<< RE >> function -- for details
+on C<< RE >>, see C<< Regexp::Common510 >>. For each pattern retrieval,
+give C<< Comment >> as the first argument to C<< RE >>, with the actual
+language as the second. A few languages have different implementations,
+with different syntax for each implementation. In such cases, C<< RE >>
+takes an option C<< -flavour >>, with the name of the implementation
+as argument.
+
+Unless documented otherwise below, giving C<< -Keep => 1 >> retrieves a
+pattern that sets four named captures, in the following order:
+
+=over 2
+
+=item C<< comment >>
+
+The entire comment, including any delimiters.
+
+=item C<< open_delimiter >>
+
+The token that starts the comment, for instance, C<< # >> in the case of
+a Perl comment.
+
+=item C<< body >>
+
+The body of the comment; that is, the entire comment without its delimiters.
+
+=item C<< close_delimiter >>
+
+The token that ends the comment. For instance, a newline in the case of 
+a Perl comment.
+
+=back
+
+A few things to consider:
+
+=over 4
+
+=item *
+
+The patterns returned are just the patterns matching comments.  They are
+B<< not >> suitable to parse languages - the patterns will happily find
+comments where a compiler wouldn't (for instance, inside strings).
+
+=item *
+
+Many language formally define a more restrictive character set than
+the Unicode, or even the ASCII character set. These restrictions are
+generally ignored.
+
+=back
+
+=head2 The Patterns
+
+Below, we will discuss the patterns for each of the languages. Most patterns
+will start with a given token, and end with a given token. 
+
+=over 2
+
+=item B<< ABC >>
+
+Comments start with C<< \ >>, and end with a newline.
+See L<< http://homepages.cwi.nl/%7Esteven/abc/language.html >>.
+
+=item B<< Ada >>
+
+Comment start with C<< -- >> and end with a newline.
+See L<< http://www.adaic.org/standards/05rm/html/RM-TTL.html >>.
+
+=item B<< Advisor >>
+
+I<< Advisor >> is used by the HP product I<< glance >>.
+
+Comment start with either C<< # >> or C<< // >> and end with a newline.
+
+=item B<< Advsys >>
+
+I<< Advsys >> is a language used to write interactive fiction in.
+
+Comments start with C<< ; >> and end with a newline.
+
+=item B<< Alan >>
+
+I<< Advsys >> is a language used to write interactive fiction in.
+
+Comments start with C<< -- >> and end with a newline.
+
+See L<< http://www.alanif.se >>
+
+=item B<< Algol 60 >>
+
+Comments start with C<< comment >> and end with C<< ; >>.
+
+Note that I<< Algol 60 >> also allows to put 'comments' after the keyword
+I<< end >>. These comments are not recognized by the pattern.
+
+See L<< http://www.masswerk.at/algol60/report.htm >>.
+
+=item B<< Algol 68 >>
+
+Comments start with C<< # >>, E<0xA2> (a cent sign), C<< co >>
+or C<< comment >>, and end with the same symbol. Note that I<< Algol 68 >> 
+allows you to use localized keywords, but no option to do so is implemented
+in this module.
+
+See L<< http://www.fh-jena.de/~kleine/history/languages/Algol68-Report.pdf >>
+
+=over 2
+
+=item B<< -flavour => 'a68toc' >>
+
+The I<< Algol 68 to C >> compiler recognizes somewhat different comments.
+Comments start with C<< # >>, C<< CO >>, or C<< COMMENT >>, and end with
+the same symbol, or start with C<< { >> and end with C<< } >>. A pattern
+for this can be retrieved using
+
+ my $comment = RE Comment => 'Algol 68', -flavour => 'a68toc';
+
+=back
+
+=back
 
 =head1 BUGS
 
