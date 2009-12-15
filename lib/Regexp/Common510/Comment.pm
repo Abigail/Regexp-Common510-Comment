@@ -466,20 +466,20 @@ sub sgml {
 
     my $WS      = "[$SPACE$RS$RE$SEPCHAR]";
 
-    my $first;
+    my $comment;
     if ($COM eq '--') {   # Optimize common case
-        $first = '[^-]*(?:-[^-]+)*';
+        $comment = '[^-]*(?:-[^-]+)*';
     }
     else {
-        my $h = quotemeta substr $COM, 0, 1;
-        my $t = quotemeta substr $COM, 1;
-        $first = "[^$h]*(?:$h(?!$t)[^$h]*)*";
+        my $h    = quotemeta substr $COM, 0, 1;
+        my $t    = quotemeta substr $COM, 1;
+        $comment = "[^$h]*(?:$h(?!$t)[^$h]*)*";
     }
 
-    "(?k<comment>:"                                                    .
-        "(?k<MDO>:$MDO)"                                               .
-            "(?k<body>:(?:(?k<COM>:$COM)(?k<first>:$first)$COM$WS*)*)" .
-        "(?k<MDC>:$MDC)"                                               .
+    "(?k<comment>:"                                                     .
+        "(?k<MDO>:$MDO)"                                                .
+            "(?k<body>:(?:(?k<COM>:$COM)(?k<comment>:$comment)$COM$WS*)*)" .
+        "(?k<MDC>:$MDC)"                                                .
     ")";
 }
 
