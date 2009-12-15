@@ -88,7 +88,7 @@ run_tests
         [MDO             => $MDO],
         [body            => $COM . $_ [0] . $COM],
         [COM             => $COM],
-        [first           => $_ [0]],
+        [comment         => $_ [0]],
         [MDC             => $MDC]],
     }
 ;
@@ -114,10 +114,49 @@ run_tests
         [MDO             => $MDO],
         [body            => $COM . $_ [0] . $COM . $_ [1]],
         [COM             => $COM],
-        [first           => $_ [0]],
+        [comment         => $_ [0]],
         [MDC             => $MDC]],
     }
 ;
+
+
+@pass = ();
+foreach my $ws1 (@whitespace) {
+    push @pass => [$valid [rand @valid] [0], $valid [rand @valid] [0], $ws1, 
+                   "Double comments"],
+    ;
+    foreach my $ws2 (@whitespace) {
+        push @pass => [$valid [rand @valid] [0], $valid [rand @valid] [0],
+                       $valid [rand @valid] [0], $ws2, $ws1,
+                       "Triple comments"],
+        ;
+    }
+}
+
+my $body;
+my $comment;
+run_tests
+    pass          => \@pass,
+    checker       => $checker,
+    make_subject  => sub {
+        my @a = @_;
+        $body = $COM . shift (@a) . $COM;
+        while (@a) {
+            $comment  = shift @a;
+            $body    .= pop (@a);
+            $body    .= "$COM$comment$COM";
+        }
+        "$MDO$body$MDC";
+    },
+    make_captures => sub {[
+        [MDO      => $MDO],
+        [body     => $body],
+        [COM      => $COM],
+        [comment  => $comment],
+        [MDC      => $MDC]],
+    }
+;
+
 
 Test::NoWarnings::had_no_warnings () if $r;
 
