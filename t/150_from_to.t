@@ -15,40 +15,44 @@ our $r = eval "require Test::NoWarnings; 1";
 use Regexp::Common510 'Comment';
 
 my @data = (
-    ALPACA           =>  '/*',      '*/',
-   'Algol 68'        =>  '{',       '}',
-   'Algol 68'        =>  '#',       '#',
-   'Algol 68'        =>  'CO',      'CO',
-   'Algol 68'        =>  'COMMENT', 'COMMENT',
-    B                =>  '/*',      '*/',
-    BML              =>  '<?_c',    '_c?>',
-    C                =>  '/*',      '*/',
-   'C--'             =>  '/*',      '*/',
-   'C++'             =>  '/*',      '*/',
-   'C#'              =>  '/*',      '*/',
-    Cg               =>  '/*',      '*/',
-   'Algol 60'        =>  'comment', ';',
-   'Befunge-98'      =>  ';',       ';',
-    ECMAScript       =>  '/*',      '*/',
-    FPL              =>  '/*',      '*/',
-   'Funge-98'        =>  ';',       ';',
-    False            =>  '!{',      '}!',
-    Haifu            =>  ',',       ',',
-    Java             =>  '/*',      '*/',
-    JavaScript       =>  '/*',      '*/',
-    LPC              =>  '/*',      '*/',
-    Nickle           =>  '/*',      '*/',
-    PEARL            =>  '/*',      '*/',
-    PHP              =>  '/*',      '*/',
-    Oberon           =>  '(*',      '*)',
-   'PL/I'            =>  '/*',      '*/',
-   [SQL => 'MySQL']  =>  '/*',      '*/',
-   [SQL => 'MySQL']  =>  '/*',      ';',
-   [SQL => 'PL/SQL'] =>  '/*',      '*/',
-    Shelta           =>  ';',       ';',
-    Smalltalk        =>  '"',       '"',
-   '*W'              =>  '||',      '!!',
-    XML              =>  '<!--',    '-->',
+    ALPACA               =>  '/*',      '*/',
+  ['Algol 68']           =>  "\x{A2}",  "\x{A2}",
+  ['Algol 68']           =>  '#',       '#',
+  ['Algol 68']           =>  'co',      'co',
+  ['Algol 68']           =>  'comment', 'comment',
+  ['Algol 68', 'a68toc'] =>  '{',       '}',
+  ['Algol 68', 'a68toc'] =>  '#',       '#',
+  ['Algol 68', 'a68toc'] =>  'CO',      'CO',
+  ['Algol 68', 'a68toc'] =>  'COMMENT', 'COMMENT',
+    B                    =>  '/*',      '*/',
+    BML                  =>  '<?_c',    '_c?>',
+    C                    =>  '/*',      '*/',
+   'C--'                 =>  '/*',      '*/',
+   'C++'                 =>  '/*',      '*/',
+   'C#'                  =>  '/*',      '*/',
+    Cg                   =>  '/*',      '*/',
+   'Algol 60'            =>  'comment', ';',
+   'Befunge-98'          =>  ';',       ';',
+    ECMAScript           =>  '/*',      '*/',
+    FPL                  =>  '/*',      '*/',
+   'Funge-98'            =>  ';',       ';',
+    False                =>  '!{',      '}!',
+    Haifu                =>  ',',       ',',
+    Java                 =>  '/*',      '*/',
+    JavaScript           =>  '/*',      '*/',
+    LPC                  =>  '/*',      '*/',
+    Nickle               =>  '/*',      '*/',
+    PEARL                =>  '/*',      '*/',
+    PHP                  =>  '/*',      '*/',
+    Oberon               =>  '(*',      '*)',
+   'PL/I'                =>  '/*',      '*/',
+   [SQL => 'MySQL']      =>  '/*',      '*/',
+   [SQL => 'MySQL']      =>  '/*',      ';',
+   [SQL => 'PL/SQL']     =>  '/*',      '*/',
+    Shelta               =>  ';',       ';',
+    Smalltalk            =>  '"',       '"',
+   '*W'                  =>  '||',      '!!',
+    XML                  =>  '<!--',    '-->',
 );
 
 while (@data) {
@@ -68,7 +72,7 @@ while (@data) {
         [" "                =>  "body is a space"],
         ;
 
-    if ($lang eq 'Algol 68' && $open =~ /C/) {
+    if ($lang eq 'Algol 68' && $open =~ /C/i) {
         push @fail =>
             ["$open$close"        =>  "Cannot seperate open/end delimiters"],
             ["$open$W $W$close"            =>  "Word flushed against token"],
@@ -88,6 +92,15 @@ while (@data) {
             ["$W $W"            =>  "standard body"],
             ["$W \x{BB} $W"     =>  "Latin-1 in body"],
             ["$W \x{4E00} $W"   =>  "Unicode in body"],
+        ;
+    }
+
+    unless ($lang eq 'Algol 68' && !$flavour) {
+        push @fail => ["\x{A2} $W \x{A2}" =>  "Wrong delimiters"],
+        ;
+    }
+    unless ($lang eq 'Algol 68' &&  $flavour eq 'a68toc') {
+        push @fail => ["{ $W }" =>  "Wrong delimiters"],
         ;
     }
 

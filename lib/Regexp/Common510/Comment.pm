@@ -407,30 +407,44 @@ pattern Comment  => "INTERCAL",
 ;
 
 #
-# http://westein.arb-phys.uni-dortmund.de/~wb/a68s.txt
-# http://www.nunan.fsnet.co.uk/algol68/pame.pdf
-# http://www.algol68.org/
-#
 # Comments are one of the following pairs:
+#     comment   comment
+#     co        co
+#     #         #
+#     \x{A2}    \x{A2}
+#
+# as defined by "Report on the Algorithm Language ALGOL 68".
+# http://www.fh-jena.de/~kleine/history/languages/Algol68-Report.pdf
+#
+# The a68toc compiler uses different delimiters:
 #     COMMENT   COMMENT
 #     CO        CO
 #     #         #
 #     {         }
-#
-# Case is not clear. http://www.nunan.fsnet.co.uk/algol68/pame.pdf uses
-# all capitals, http://westein.arb-phys.uni-dortmund.de/~wb/a68s.txt lower
-# case (but is offline). The latter also claims CO and COMMENT should be
-# words, and doesn't mention { }.
-#
-# For now, I will use capitals, and allow { }. This one may have flavours
-# in the future.
+# as found on http://www.algol68.org/.
 # 
-pattern Comment  => 'Algol 68',
-        -pattern => do {
-            my @patterns;
-            push @patterns => from_to ('#',     '#'),
-                              from_to ('{',     '}');
-            push @patterns =>
+sub algol68 {
+    my %arg = @_;
+    my $flavour = $arg {-flavour} // "";
+    my @patterns;
+    push @patterns => from_to ('#', '#');
+
+    given ($flavour) {
+        when ([""]) {
+            push @patterns => from_to ("\x{A2}", "\x{A2}"),
+
+                '(?k<open_delimiter>:\bco\b)'                     .
+                '(?k<body>:[^c]*(?:(?:\Bc|c(?!o\b))[^c]*)*)'      .
+                '(?k<close_delimiter>:\bco\b)',
+
+                '(?k<open_delimiter>:\bcomment\b)'                .
+                '(?k<body>:[^c]*(?:(?:\Bc|c(?!omment\b))[^c]*)*)' .
+                '(?k<close_delimiter>:\bcomment\b)',
+            ;
+        }
+        when (["a68toc"]) {
+            push @patterns => from_to ("{", "}"),
+
                 '(?k<open_delimiter>:\bCO\b)'                     .
                 '(?k<body>:[^C]*(?:(?:\BC|C(?!O\b))[^C]*)*)'      .
                 '(?k<close_delimiter>:\bCO\b)',
@@ -439,9 +453,20 @@ pattern Comment  => 'Algol 68',
                 '(?k<body>:[^C]*(?:(?:\BC|C(?!OMMENT\b))[^C]*)*)' .
                 '(?k<close_delimiter>:\bCOMMENT\b)',
             ;
-            local $" = "|";
-            "(?k<comment>:(?|@patterns))";
         }
+
+        default {
+            die "Unknown -flavour '$_'";
+        }
+    }
+
+    local $" = "|";
+    "(?k<comment>:(?|@patterns))";
+}
+
+pattern Comment  => 'Algol 68',
+        -config  => {-flavour => undef},
+        -pattern => \&algol68,
 ;
 
 
