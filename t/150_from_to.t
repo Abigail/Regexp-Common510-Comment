@@ -10,7 +10,7 @@ use Test::More 0.88;
 use Test::Regexp 2009121001;
 use t::Common;
 
-our $r = eval "require Test-::NoWarnings; 1";
+our $r = eval "require Test::NoWarnings; 1";
 
 use Regexp::Common510 'Comment';
 
