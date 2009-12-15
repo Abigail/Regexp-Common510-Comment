@@ -70,11 +70,11 @@ while (@data) {
 
     if ($lang eq 'Algol 68' && $open =~ /C/) {
         push @fail =>
-            [""                 =>  "Cannot seperate open/end delimiters"],
-            ["$W $W"            =>  "Word flushed against token"],
-            [" $W \x{BB} $W"    =>  "Word flushed against token"],
-            ["$W \x{4E00} $W "  =>  "Word flushed against token"],
-            [$BIG               =>  "Word flushed against token"],
+            ["$open$close"        =>  "Cannot seperate open/end delimiters"],
+            ["$open$W $W$close"            =>  "Word flushed against token"],
+            ["$open $W \x{BB} $W$close"    =>  "Word flushed against token"],
+            ["$open$W \x{4E00} $W $close"  =>  "Word flushed against token"],
+            ["$open$BIG$close"             =>  "Word flushed against token"],
         ;
         push @pass =>
             [" $W $W "          =>  "standard body"],
@@ -92,9 +92,9 @@ while (@data) {
     }
 
     if ($lang eq 'XML') {
-        push @fail => ["--"     =>  "double hyphen"],
-                      [" $W-"   =>  "trailing hyphen"],
-                      ["-"      =>  "single hyphen"],
+        push @fail => ["$open--$close"    =>  "double hyphen"],
+                      ["$open $W-$close"  =>  "trailing hyphen"],
+                      ["$open-$close"     =>  "single hyphen"],
         ;
     }
     else {
@@ -163,17 +163,13 @@ while (@data) {
     if ($lang eq 'XML') {
         no warnings 'utf8';
         push @fail => 
-            [" \x{0C} "            => "form feed"],
-        #   [" \x{D800}\x{D800} "  => "surrogate"],
-        #   [" \x{FFFF} "          => "illegal"],
+            ["<!-- \x{0C} -->"     => "form feed"],
         ;
     }
     else {
         no warnings 'utf8';
         push @pass =>
             [" \x{0C} "            => "form feed"],
-        #   [" \x{D800}\x{D800} "  => "surrogate"],
-        #   [" \x{FFFF} "          => "illegal unicode"],
         ;
     }
 
