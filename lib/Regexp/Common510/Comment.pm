@@ -488,6 +488,18 @@ pattern Comment  => 'HTML',
 ;
          
 
+#
+# http://www.w3.org/TR/2008/REC-xml-20081126/
+#
+pattern Comment  => 'XML',
+        -pattern => do {
+            my $chars = '\x{09}\x{0A}\x{0D}\x{20}-\x{2C}\x{2E}-\x{D7FF}' .
+                        '\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}';
+            "(?k<comment>:(?k<open_delimiter>:<!--)" .
+            "(?k<body>:[$chars]*(?:-[$chars]+)*)(?k<close_delimiter>:-->))";
+        }
+;
+
 1;
 
 __END__

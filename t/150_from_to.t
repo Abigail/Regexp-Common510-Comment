@@ -48,6 +48,7 @@ my @data = (
     Shelta           =>  ';',       ';',
     Smalltalk        =>  '"',       '"',
    '*W'              =>  '||',      '!!',
+    XML              =>  '<!--',    '-->',
 );
 
 while (@data) {
@@ -62,7 +63,7 @@ while (@data) {
 
     push @pass => 
         ["\n"               =>  "body is newline"],
-        ["--"               =>  "hyphens"],
+        ["- "               =>  "leading hyphen"],
         ["//"               =>  "slashes"],
         [" "                =>  "body is a space"],
         ;
@@ -90,8 +91,27 @@ while (@data) {
         ;
     }
 
+    if ($lang eq 'XML') {
+        push @fail => ["--"     =>  "double hyphen"],
+                      [" $W-"   =>  "trailing hyphen"],
+                      ["-"      =>  "single hyphen"],
+        ;
+    }
+    else {
+        push @pass => ["--"     =>  "double hyphen"],
+                      [" $W-"   =>  "trailing hyphen"],
+                      ["-"      =>  "single hyphen"],
+        ;
+    }
+
     if ($open ne $close) {
-        if (-1 == index ("$open$open" => $close) &&
+        if ($lang eq 'XML') {
+            push @fail =>
+                ["$open$open"       =>  "extra hyphens"],
+                ["$open$open$open"  =>  "extra hyphens"],
+            ;
+        }
+        elsif (-1 == index ("$open$open" => $close) &&
              !($lang eq 'SQL'  &&  $flavour eq 'MySQL')) {
             push @pass => 
                 [$open              =>  "body consists of opening delimiter"],
@@ -103,10 +123,14 @@ while (@data) {
             push @fail =>
                 ["$open$open"       =>  "trailing garbage"],
                 ["$open$open$open"  =>  "trailing garbage"],
-                ;
+            ;
         }
 
-        if ($close eq '*/' ||
+        if ($lang  eq 'XML') {
+            push @fail => ["$open /* $open */ $close" => "extra hyphens"],
+            ;
+        }
+        elsif ($close eq '*/' ||
             $lang  eq 'SQL' && $flavour eq 'MySQL') {
             push @fail => ["$open /* $open */ $close" => "trailing garbage"],
             ;
@@ -134,6 +158,23 @@ while (@data) {
             ["$close$open"         => "reversed delimiters"],
             ["$close \n $open"     => "reversed delimiters"]
             ;
+    }
+
+    if ($lang eq 'XML') {
+        no warnings 'utf8';
+        push @fail => 
+            [" \x{0C} "            => "form feed"],
+        #   [" \x{D800}\x{D800} "  => "surrogate"],
+        #   [" \x{FFFF} "          => "illegal"],
+        ;
+    }
+    else {
+        no warnings 'utf8';
+        push @pass =>
+            [" \x{0C} "            => "form feed"],
+        #   [" \x{D800}\x{D800} "  => "surrogate"],
+        #   [" \x{FFFF} "          => "illegal unicode"],
+        ;
     }
 
     my $wack = $lang eq '*W' ? '??' : '!!';
