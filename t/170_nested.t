@@ -12,7 +12,7 @@ use t::Common;
 
 our $r = eval "require Test::NoWarnings; 1";
 
-use Regexp::Common510 'Comment';
+use Regexp::Common510;
 
 my @data = (
     Dylan            =>  '/*',      '*/',
