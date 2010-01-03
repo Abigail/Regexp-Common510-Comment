@@ -9,6 +9,8 @@ our $VERSION = '2009120201';
 
 use Regexp::Common510 -api => 'pattern', 'unique_name';
 
+my $CATEGORY = 'Comment';
+
 my $NO_NL = $] >= 5.011001 ? '\N' : '[^\n]';
 
 #
@@ -167,7 +169,7 @@ sub nested {
 while (@eol) {
     my ($lang, $token) =   splice @eol, 0, 2;
     my  $pattern       =   eol $token;
-    pattern Comment    => $lang,
+    pattern $CATEGORY  => $lang,
             -pattern   => "(?k<comment>:$pattern)",
     ;
 }
@@ -175,7 +177,7 @@ while (@eol) {
 while (@from_to) {
     my ($lang, $open, $close) =   splice @from_to, 0, 3;
     my  $pattern              =   from_to $open => $close;
-    pattern Comment           => $lang,
+    pattern $CATEGORY         => $lang,
             -pattern          => "(?k<comment>:$pattern)",
     ;
 }
@@ -184,7 +186,7 @@ while (@eol_from_to) {
     my ($lang, $token, $open, $close) = splice @eol_from_to, 0, 4;
     my  $pattern1             =   eol     $token;
     my  $pattern2             =   from_to $open => $close;
-    pattern Comment           => $lang,
+    pattern $CATEGORY         => $lang,
             -pattern          => "(?k<comment>:(?|$pattern1|$pattern2))",
     ;
 }
@@ -195,8 +197,8 @@ while (@nested) {
 
     my $pattern = nested $open => $close;
 
-    pattern Comment  => $lang,
-            -pattern => "(?k<comment>:$pattern)",
+    pattern $CATEGORY => $lang,
+            -pattern  => "(?k<comment>:$pattern)",
     ;
 }
 
@@ -221,8 +223,8 @@ while (@eol_nested) {
     # $nested_pattern, it's vital $nested_pattern is to the left of
     # $eol_pattern.
     #
-    pattern Comment  => $lang,
-            -pattern => "(?k<comment>:(?|$nested_pattern|$eol_pattern))",
+    pattern $CATEGORY => $lang,
+            -pattern  => "(?k<comment>:(?|$nested_pattern|$eol_pattern))",
     ;
 }
 
@@ -230,9 +232,9 @@ while (@eol_nested) {
 # There are many implementations (flavours) of Pascal, with different
 # syntaxes comments. We'll default to the ISO standard.
 #
-pattern  Comment => 'Pascal',
-        -config  => {-flavour => undef},
-        -pattern => \&pascal,
+pattern $CATEGORY => 'Pascal',
+        -config   => {-flavour => undef},
+        -pattern  => \&pascal,
         ;
 
 sub pascal {
@@ -302,9 +304,9 @@ sub pascal {
 # There are many implementations (flavours) of BASIC, with different
 # syntaxes comments.
 #
-pattern  Comment => 'BASIC',
-        -config  => {-flavour => undef},
-        -pattern => \&basic,
+pattern $CATEGORY => 'BASIC',
+        -config   => {-flavour => undef},
+        -pattern  => \&basic,
         ;
 
 sub basic {
@@ -337,9 +339,9 @@ sub basic {
 }
 
 
-pattern  Comment => 'SQL',
-        -config  => {-flavour => undef},
-        -pattern => \&sql,
+pattern $CATEGORY => 'SQL',
+        -config   => {-flavour => undef},
+        -pattern  => \&sql,
         ;
 
 
@@ -397,8 +399,8 @@ sub sql {
 # Comments start with [PLEASE \s+][DO[\s*]](NOT|N'T), last till the
 # end of the line, and cannot contain DO.
 #
-pattern Comment  => "INTERCAL",
-        -pattern =>
+pattern $CATEGORY => "INTERCAL",
+        -pattern  =>
            "(?k<comment>:"                                                   .
                "(?k<open_delimiter>:(?:PLEASE\\s+)?(?:DO\\s*)?(?:NOT|N'T))"  .
                '(?k<body>:[^D\n]*(?:D(?!O)[^D\n]*)*)'                        .
@@ -464,9 +466,9 @@ sub algol68 {
     "(?k<comment>:(?|@patterns))";
 }
 
-pattern Comment  => 'Algol 68',
-        -config  => {-flavour => undef},
-        -pattern => \&algol68,
+pattern $CATEGORY => 'Algol 68',
+        -config   => {-flavour => undef},
+        -pattern  => \&algol68,
 ;
 
 
@@ -508,16 +510,16 @@ sub sgml {
     ")";
 }
 
-pattern Comment  => 'HTML',
-        -pattern => sgml (-MDO => "<!", -MDC => ">", -COM => "--")
+pattern $CATEGORY => 'HTML',
+        -pattern  => sgml (-MDO => "<!", -MDC => ">", -COM => "--")
 ;
          
 
 #
 # http://www.w3.org/TR/2008/REC-xml-20081126/
 #
-pattern Comment  => 'XML',
-        -pattern => do {
+pattern $CATEGORY => 'XML',
+        -pattern  => do {
             my $chars = '\x{09}\x{0A}\x{0D}\x{20}-\x{2C}\x{2E}-\x{D7FF}' .
                         '\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}';
             "(?k<comment>:(?k<open_delimiter>:<!--)" .
@@ -671,6 +673,14 @@ for this can be retrieved using
  my $comment = RE Comment => 'Algol 68', -flavour => 'a68toc';
 
 =back
+
+=item B<< ALPACA >>
+
+I<< ALPACA >> is a language for programming cellular automata.
+
+Comments start with C<< /* >> and end with C<< */ >>.
+
+See L<< http://catseye.tc/projects/alpaca/doc/alpaca.html >>
 
 =back
 
