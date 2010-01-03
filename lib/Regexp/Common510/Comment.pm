@@ -537,7 +537,7 @@ Regexp::Common510::Comment - Abstract
 
 =head1 SYNOPSIS
 
- use Regexp::Common510 qw [Comment];
+ use Regexp::Common510;
 
  my $html_comment = RE Comment  => 'HTML';
  /$htm_comment/ and say '$_ contains an HTML comment';
