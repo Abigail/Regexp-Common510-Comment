@@ -9,13 +9,14 @@ no  warnings 'syntax';
 use Test::More 0.88;
 use Tie::Scalar;
 use Exporter ();
-use Regexp::Common510 -api => 'RE';
+use Regexp::Common510;
 
-our @ISA     = qw [Tie::StdScalar Exporter];
-our @EXPORT  = qw [$W $BIG run_tests parse_lang no_nl];
+our @ISA      = qw [Tie::StdScalar Exporter];
+our @EXPORT   = qw [$W $BIG run_tests parse_lang no_nl];
 
-my  $LANG    = "";
-my  $FLAVOUR = "";
+my  $LANG     = "";
+my  $FLAVOUR  = "";
+my  $CATEGORY = "Comment";
 
 our $ams = eval "require Acme::MetaSyntactic; 1";
 
@@ -83,8 +84,8 @@ sub run_tests {
             $pat_name = "$lang (-flavour => $flavour)";
         }
 
-        my $pattern1 = RE Comment => $lang, @args;
-        my $pattern2 = RE Comment => $lang, @args, -Keep => 1;
+        my $pattern1 = RE $CATEGORY => $lang, @args;
+        my $pattern2 = RE $CATEGORY => $lang, @args, -Keep => 1;
         ok $pattern1, "Got a pattern for $pat_name ($pattern1)";
         ok $pattern2, "Got a keep pattern for $pat_name ($pattern2)";
 
