@@ -683,6 +683,43 @@ Comments start with C<< /* >> and end with C<< */ >>.
 
 See L<< http://catseye.tc/projects/alpaca/doc/alpaca.html >>
 
+=item B<< awk >>
+
+The standard text processing language found on Unix systems, part of 
+I<< IEEE Std 1003.1-2004 >> (aka I<< POSIX >>) standard.
+
+Comments start with C<< # >> and end with a newline. 
+
+See L<< http://www.opengroup.org/onlinepubs/000095399/utilities/awk.html >>
+
+=item B<< B >>
+
+A general purpose language developed at Bell Labs as a stripped down version
+of I<< BCPL >>. It was quickly replaced by I<< C >>.
+
+Comments start with C<< /* >> and end with C<< */ >>.
+
+See L<< http://cm.bell-labs.com/cm/cs/who/dmr/bintro.html >>
+
+=item B<< BASIC >>
+
+A well-known language, for many people the first language they programmed
+in, which first appeared in the early 1960s. There are many implementations.
+
+In the default implementation, comments start with C<< REM >> and end
+with a newline.
+
+=over 2 
+
+=item B<< -flavour => 'mvEnterprise' >>
+
+In this implementation, comments start with C<< REM >>, C<< * >> or C<< ! >>,
+and end with a newline.
+
+=back
+
+=item B<< BCPL >>
+
 =back
 
 =head1 BUGS
