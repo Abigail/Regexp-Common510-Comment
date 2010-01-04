@@ -720,6 +720,13 @@ and end with a newline.
 
 =item B<< BCPL >>
 
+I<< BCPL >> was the first "braces" language. Developed in the 1960s, it was
+a predecessor of I<< B >>, and hence indirectly of I<< C >>.
+
+Comments start with C<< // >> and end with a newline.
+
+See L<< http://www.fh-jena.de/~kleine/history/languages/Richards-BCPL-ReferenceManual.pdf >>.
+
 =back
 
 =head1 BUGS
