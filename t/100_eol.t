@@ -26,6 +26,7 @@ my @data = (
    [BASIC => 'mvEnterprise'] =>  'REM',
    [BASIC => 'mvEnterprise'] =>  '*',
    [BASIC => 'mvEnterprise'] =>  '!',
+    BCPL                     =>  '//',
    'beta-Juliet'             =>  '//',
    'C++'                     =>  '//',
    'C#'                      =>  '//',

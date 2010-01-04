@@ -54,6 +54,7 @@ my @eol = (
     Advsys           =>  ';',
     Alan             =>  '--',
     awk              =>  '#',
+    BCPL             =>  '//',
    'beta-Juliet'     =>  '//',
     CLU              =>  '%',
     CQL              =>  ';',
