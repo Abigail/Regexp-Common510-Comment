@@ -806,7 +806,7 @@ Comments start with C<< /* >> and end with C<< */ >>.
 
 See: Brian W. Kernighan and Dennis M. Ritchie:
 I<< The C Programming Language >>, B<< 1978 >>,
-ISBN: L<< 0-13-110163-3|http://www.worldcat.org/search?q=isbn%3A0131101633 >>.
+ISBN: 0-13-110163-3 (L<< http://www.worldcat.org/search?q=isbn%3A0131101633 >>.
 
 =item B<< C++ >>
 
@@ -814,7 +814,7 @@ Comments either start with C<< /* >> and end with C<< */ >>, or start
 with C<< // >> and end with a newline.
 
 See: Bjarne Stroustrup: I<< The C++ Programming Language >>, B<< 1986 >>,
-ISBN: L<< 0-20-112078-X|http://www.worldcat.org/search?q=isbn%3A020112078X >>.
+ISBN: 0-20-112078-X (L<< http://www.worldcat.org/search?q=isbn%3A020112078X >>.
 
 =item B<< C# >>
 
@@ -825,7 +825,8 @@ with C<< // >> and end with one of the following characters: a newline,
 a carriage return, a next line (C<< U+0085 >>),
 a line separator (C<< U+2028 >>), or a paragraph separator (C<< U+2029 >>).
 
-See L<< ECMA Standard 334|http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-334.pdf >>.
+See ECMA Standard 334 (L<<
+http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-334.pdf >>).
 
 =back
 
