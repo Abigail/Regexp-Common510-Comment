@@ -529,6 +529,10 @@ pattern $CATEGORY => 'XML',
         }
 ;
 
+pattern $CATEGORY => 'Brainfuck',
+        -pattern  => '(?k<comment>:(?k<body>:[^][<>.,+-]+))',
+;
+
 1;
 
 __END__
@@ -760,6 +764,18 @@ I<< BML >> or I<< Better Markup Language >> is an HTML templating language.
 Comments start with C<< <?c_ >> and end with C<< c_?> >>.
 
 See L<< http://www.livejournal.com/doc/server/bml.index.html >>
+
+=item B<< Brainfuck >>
+
+An esoteric, minimal language with just 8 characters.
+
+Any character that isn't C<E<lt>>, C<E<gt>>, C<[>, C<]>, C<+>, C<->, C<.> 
+or C<,> is considered a comment.
+
+See L<< http://esolangs.org/wiki/Brainfuck >>.
+
+If the C<< -Keep >> option is given, there will be only two captures:
+C<< comment >> and C<< body >>, which will both match the entire comment.
 
 =back
 
