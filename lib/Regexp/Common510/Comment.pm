@@ -529,6 +529,13 @@ pattern $CATEGORY => 'XML',
         }
 ;
 
+#
+# Brainfuck only as 8 commands, each written as a single character:
+#    < > [ ] . , + -
+# anything else is considered a comment.
+#
+# http://esolangs.org/wiki/Brainfuck
+#
 pattern $CATEGORY => 'Brainfuck',
         -pattern  => '(?k<comment>:(?k<body>:[^][<>.,+-]+))',
 ;
@@ -622,7 +629,7 @@ will start with a given token, and end with a given token.
 =item B<< 2Iota >>
 
 I<< 2Iota >> is an esoteric event-based language;
-a successor to I<< beta-Juliet>> and I<< Portia >>.
+a successor to I<< beta-Juliet >> and I<< Portia >>.
 
 Comments start with C<< // >> and end with a newline.
 
@@ -776,6 +783,23 @@ See L<< http://esolangs.org/wiki/Brainfuck >>.
 
 If the C<< -Keep >> option is given, there will be only two captures:
 C<< comment >> and C<< body >>, which will both match the entire comment.
+
+=item B<< C >>
+
+Comments start with C<< /* >> and end with C<< */ >>.
+
+See: Brian W. Kernighan and Dennis M. Ritchie:
+I<< The C Programming Language >>, B<< 1978 >>,
+ISBN: L<< 0-13-110163-3|http://www.worldcat.org/search?q=isbn%3A0131101633 >>.
+
+=item B<< C++ >>
+
+Comments either start with C<< /* >> and end with C<< */ >>, or start
+with C<< // >> and end with a newline.
+
+See: Bjarne Stroustrup: I<< The C++ Programming Language >>, B<< 1986 >>,
+ISBN: L<< 0-20-112078-X|http://www.worldcat.org/search?q=isbn%3A020112078X >>.
+
 
 =back
 
