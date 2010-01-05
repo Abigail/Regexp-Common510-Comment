@@ -15,6 +15,7 @@ our $r = eval "require Test::NoWarnings; 1";
 use Regexp::Common510;
 
 my @data = (
+   '2Iota'                   =>  '//',
     ABC                      =>  '\\',
     Ada                      =>  '--',
     Advisor                  =>  '//',

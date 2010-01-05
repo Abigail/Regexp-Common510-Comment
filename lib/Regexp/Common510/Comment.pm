@@ -48,6 +48,7 @@ sub from_to ($$) {
 
 
 my @eol = (
+   '2Iota'           =>  '//',
     ABC              =>  '\\\\',  # That's a *single* backslash.
     Ada              =>  '--',
     Advisor          =>  '#|//',
@@ -614,6 +615,15 @@ will start with a given token, and end with a given token.
 
 =over 2
 
+=item B<< 2Iota >>
+
+I<< 2Iota >> is an esoteric event-based language;
+a successor to I<< beta-Juliet>> and I<< Portia >>.
+
+Comments start with C<< // >> and end with a newline.
+
+See L<< http://catseye.tc/projects/2iota/ >>.
+
 =item B<< ABC >>
 
 Comments start with C<< \ >>, and end with a newline.
@@ -726,6 +736,14 @@ a predecessor of I<< B >>, and hence indirectly of I<< C >>.
 Comments start with C<< // >> and end with a newline.
 
 See L<< http://www.fh-jena.de/~kleine/history/languages/Richards-BCPL-ReferenceManual.pdf >>.
+
+=item B<< beta-Juliet >>
+
+I<< beta-Juliet >> is an esoteric event-based language.
+
+Comments start with C<< // >> and end with a newline.
+
+See L<< http://catseye.tc/projects/b_juliet/ >>.
 
 =back
 
