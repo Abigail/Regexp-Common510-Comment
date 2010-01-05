@@ -30,6 +30,11 @@ my @data = (
    'C--'                 =>  '/*',      '*/',
    'C++'                 =>  '/*',      '*/',
    'C#'                  =>  '/*',      '*/',
+   'C#'                  =>  '//',      "\x{000A}",
+   'C#'                  =>  '//',      "\x{000D}",
+   'C#'                  =>  '//',      "\x{0085}",
+   'C#'                  =>  '//',      "\x{2028}",
+   'C#'                  =>  '//',      "\x{2029}",
     Cg                   =>  '/*',      '*/',
    'Algol 60'            =>  'comment', ';',
    'Befunge-98'          =>  ';',       ';',
@@ -66,11 +71,27 @@ while (@data) {
     my $arr;
 
     push @pass => 
-        ["\n"               =>  "body is newline"],
         ["- "               =>  "leading hyphen"],
         ["//"               =>  "slashes"],
         [" "                =>  "body is a space"],
         ;
+
+    #
+    # There are five different 'newlines' that may end a C# inline comment.
+    # None of them may appear inside the comment.
+    #
+    if ($lang eq 'C#' && $open eq '//') {
+        my @chars = (0x000A, 0x000D, 0x0085, 0x2028, 0x2029);
+        foreach my $ch (@chars) {
+            my $char = chr $ch;
+            push @fail => ["$open$W$char$W$close" => "chr($ch) in body"],
+                          ["$open$char$close"     => "body is chr($ch)"],
+            ;
+        }
+    }
+    else {
+        push @pass => ["\n"  => "body is newline"],
+    }
 
     if ($lang eq 'Algol 68' && $open =~ /C/i) {
         push @fail =>
@@ -156,12 +177,12 @@ while (@data) {
         if (($close ne '*/' || $lang  eq 'SQL' && $flavour eq 'MySQL') &&
              $lang ne 'Algol 60') {
             push @pass => 
-                [" '*/' "          =>  "single quoted */"],
-                [' "*/" '          =>  "double quoted */"],
-                [" '; ' "          =>  "single quoted ; "],
-                [' "; " '          =>  "double quoted ; "],
-                [q { '*/ $W' ';'}  => "multiple escapes"],
-                [q { "*/ $W" ';'}  => "multiple escapes"],
+                [" '*/' "           =>  "single quoted */"],
+                [' "*/" '           =>  "double quoted */"],
+                [" '; ' "           =>  "single quoted ; "],
+                [' "; " '           =>  "double quoted ; "],
+                [qq { '*/ $W' ';'}  => "multiple escapes"],
+                [qq { "*/ $W" ';'}  => "multiple escapes"],
             ;
         }
 

@@ -118,7 +118,6 @@ my @from_to = (
 
 my @eol_from_to = (
    'C++'             =>  '//',      '/*',  '*/',
-   'C#'              =>  '//',      '/*',  '*/',
     Cg               =>  '//',      '/*',  '*/',
     ECMAScript       =>  '//',      '/*',  '*/',
     FPL              =>  '//',      '/*',  '*/',
@@ -229,6 +228,23 @@ while (@eol_nested) {
             -pattern  => "(?k<comment>:(?|$nested_pattern|$eol_pattern))",
     ;
 }
+
+#
+# Inline comments in C# end with a newline, carriage return, next line,
+# paragraph separator or a line separator.
+#
+pattern $CATEGORY => 'C#',
+        -pattern  => do {
+            my   $newlines = '\x{000A}\x{000D}\x{0085}\x{2028}\x{2029}';
+            my   @patterns;
+            push @patterns => from_to '/*', '*/';
+            push @patterns => "(?k<open_delimiter>://)" .
+                              "(?k<body>:[^$newlines]*)" .
+                              "(?k<close_delimiter>:[$newlines])";
+            local $" = "|";
+            "(?k<comment>:(?|@patterns))";
+        },
+;
 
 #
 # There are many implementations (flavours) of Pascal, with different
@@ -800,6 +816,16 @@ with C<< // >> and end with a newline.
 See: Bjarne Stroustrup: I<< The C++ Programming Language >>, B<< 1986 >>,
 ISBN: L<< 0-20-112078-X|http://www.worldcat.org/search?q=isbn%3A020112078X >>.
 
+=item B<< C# >>
+
+I<< C# >> is a general purpose object oriented language designed by Microsoft.
+
+Comments either start with C<< /* >> and end with C<< */ >>, or start
+with C<< // >> and end with one of the following characters: a newline,
+a carriage return, a next line (C<< U+0085 >>),
+a line separator (C<< U+2028 >>), or a paragraph separator (C<< U+2029 >>).
+
+See L<< ECMA Standard 334|http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-334.pdf >>.
 
 =back
 
