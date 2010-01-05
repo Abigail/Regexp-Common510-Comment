@@ -745,6 +745,22 @@ Comments start with C<< // >> and end with a newline.
 
 See L<< http://catseye.tc/projects/b_juliet/ >>.
 
+=item B<< Befunge-98 >>
+
+An esoteric language from the I<< Funge-98 >> family.
+
+Comments start with C<< ; >> and end with C<< ; >>
+
+See L<< http://catseye.tc/projects/fbbi/ >>
+
+=item B<< BML >>
+
+I<< BML >> or I<< Better Markup Language >> is an HTML templating language.
+
+Comments start with C<< <?c_ >> and end with C<< c_?> >>.
+
+See L<< http://www.livejournal.com/doc/server/bml.index.html >>
+
 =back
 
 =head1 BUGS
