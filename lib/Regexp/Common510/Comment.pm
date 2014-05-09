@@ -7,11 +7,17 @@ no  warnings 'syntax';
 
 our $VERSION = '2009120201';
 
-use Regexp::Common510 -api => 'pattern', 'unique_name';
+use Regexp::Common510;
 
 my $CATEGORY = 'Comment';
 
 my $NO_NL = $] >= 5.011001 ? '\N' : '[^\n]';
+
+sub unique_name {
+    state $counter = "aaaaaa";
+
+    "__RC_Comment__" . $counter ++;
+}
 
 #
 # Return a pattern which starts with a specific token, and lasts
