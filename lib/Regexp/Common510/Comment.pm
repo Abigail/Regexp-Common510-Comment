@@ -412,6 +412,28 @@ sub sql {
 
 
 #
+# http://www.cs.caltech.edu/courses/cs134/cs134b/book.pdf
+#
+# In Caml, comments start with (* and end with *). They can be nested,
+# and delimiters that appear as string literals are ignored.
+#
+pattern $CATEGORY => "Caml",
+        -pattern  => do {
+            my $tag = unique_name;
+            my $esc = '\\\\';
+            my $str = # String literal
+                qq {"[^'"$esc]*} .
+                qq {(?:$esc(?:[nrtb $esc'"]|[0-9]{3}|x[0-9a-fA-F]{2})[^'"$esc]*)*"};
+            "(?<$tag>" .
+                "(?k<comment>:" .
+                   "(?k<open_delimiter>:\Q(*\E)"  .
+                   qq {(?k<body>:[^(*"]*(?:(?:(?:$str)|[(](?![*])|[*](?![)])|(?&$tag))[^(*"]*)*)} .
+                   "(?k<close_delimiter>:\Q*)\E)" .
+            "))"
+        };
+
+
+#
 # http://oops.se/~urban/pit/intercal.ps
 #
 # Comments start with [PLEASE \s+][DO[\s*]](NOT|N'T), last till the
@@ -825,8 +847,16 @@ with C<< // >> and end with one of the following characters: a newline,
 a carriage return, a next line (C<< U+0085 >>),
 a line separator (C<< U+2028 >>), or a paragraph separator (C<< U+2029 >>).
 
-See ECMA Standard 334 (L<<
+See: ECMA Standard 334 (L<<
 http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-334.pdf >>).
+
+=item B<< Caml >>
+
+Comments start with C<< (* >>, end with C<< *) >> and can be nested.
+However, delimiters that appear as a string or character literal are
+ignored.
+
+See L<< http://www.cs.caltech.edu/courses/cs134/cs134b/book.pdf >>
 
 =back
 

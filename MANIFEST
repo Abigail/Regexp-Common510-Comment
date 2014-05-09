@@ -10,6 +10,7 @@ t/170_nested.t
 t/400_pascal.t
 t/410_html.t
 t/420_brainfuck.t
+t/430_caml.t
 t/950_pod.t
 t/960_pod_coverage.t
 t/990_kwalitee.t

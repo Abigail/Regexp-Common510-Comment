@@ -106,7 +106,9 @@ sub run_tests {
         #
         # Add default.
         #
-        if ($captures && (!@$captures || $$captures [0] [0] ne 'comment') &&
+        if ($captures && (!@$captures         || 
+                          !$$captures [0] [0] ||
+                           $$captures [0] [0] ne 'comment') &&
             $subject) {
             unshift @$captures => [comment => $subject];
         }
