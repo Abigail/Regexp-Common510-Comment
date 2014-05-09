@@ -2,93 +2,68 @@
 
 use 5.010;
 
+use Test::More 0.88;
+use Test::Regexp;
+use Regexp::Common510 'Comment';
+use t::Common;
+
 use strict;
 use warnings;
 no  warnings 'syntax';
 
-use Test::More 0.88;
-use Test::Regexp 2009121001;
-use t::Common;
-
 our $r = eval "require Test::NoWarnings; 1";
 
-use Regexp::Common510;
+foreach my $eol_entry (@eol_tokens) {
+    my ($lang, $token) = @$eol_entry;
 
-my @data = (
-   '2Iota'                   =>  '//',
-    ABC                      =>  '\\',
-    Ada                      =>  '--',
-    Advisor                  =>  '//',
-    Advisor                  =>  '#',
-    Advsys                   =>  ';',
-    Alan                     =>  '--',
-    awk                      =>  '#',
-    BASIC                    =>  'REM',
-   [BASIC => 'mvEnterprise'] =>  'REM',
-   [BASIC => 'mvEnterprise'] =>  '*',
-   [BASIC => 'mvEnterprise'] =>  '!',
-    BCPL                     =>  '//',
-   'beta-Juliet'             =>  '//',
-   'C++'                     =>  '//',
-    Cg                       =>  '//',
-    CLU                      =>  '%',
-    CQL                      =>  ';',   
-   'Crystal Report'          =>  '//',
-    ECMAScript               =>  '//',
-    Eiffel                   =>  '--',
-    Forth                    =>  '\\',
-    Fortran                  =>  '!',
-    FPL                      =>  '//',
-    fvwm2                    =>  '#',
-    ICON                     =>  '#',
-    ILLGOL                   =>  'NB',
-    INTERCAL                 =>  'DO NOT',
-    INTERCAL                 =>  "DON'T",
-    INTERCAL                 =>  "PLEASE NOT",
-    INTERCAL                 =>  "PLEASE DON'T",
-    J                        =>  'NB.',
-    Java                     =>  '//',
-    JavaScript               =>  '//',
-    LaTeX                    =>  '%', 
-    Lisp                     =>  ';',
-    LOGO                     =>  ';',
-    lua                      =>  '--',
-    M                        =>  ';',
-    m4                       =>  '#',
-    MUMPS                    =>  ';',
-    mutt                     =>  '#',
-    Nickle                   =>  '#',
-    PEARL                    =>  '!',
-    Perl                     =>  '#',
-    PHP                      =>  '#',
-    PHP                      =>  '//',
-   'PL/B'                    =>  '.',
-   'PL/B'                    =>  ';',
-    Portia                   =>  '//',
-    Python                   =>  '#',
-   'Q-BAL'                   =>  '`',
-    QML                      =>  '#',
-    R                        =>  '#',
-    REBOL                    =>  ';',
-    Ruby                     =>  '#',
-    Scheme                   =>  ';',
-    shell                    =>  '#',
-    slrn                     =>  '%',
-    SMITH                    =>  ';', 
-    SQL                      =>  '--',
-    SQL                      =>  '---',
-    SQL                      =>  '----',
-   [SQL => 'MySQL']          =>  '#',
-   [SQL => 'MySQL']          =>  '-- ',
-   [SQL => 'PL/SQL']         =>  '--',
-    Tcl                      =>  '#', 
-    TeX                      =>  '%',
-    troff                    =>  '\\"',
-    Ubercode                 =>  '//',
-    vi                       =>  '"', 
-    zonefile                 =>  ';',
-   'ZZT-OOP'                 =>  "'",
-);
+    my @args;
+    if (ref $lang) {
+        push @args => -flavour => $$lang [1];
+        $lang = $$lang [0];
+    }
+
+    my $test = Test::Regexp:: -> new -> init (
+        pattern      => RE (Comment => $lang, @args),
+        keep_pattern => RE (Comment => $lang, @args, -Keep => 1),
+        full_text    => 1,
+        name         => @args ? sprintf "%s lang (%s flavour) comment" =>
+                                         $lang, $args [1]
+                              : "$lang comment",
+    );
+
+    my @test_data = (
+        ["Empty comment"   =>  ""],
+        ["Normal comment"  =>  "This is a comment"],
+        ["Space"           =>  " "],
+        ["Unicode"         => "Pick up the \x{260F}!"],
+    );
+
+    push @test_data => ["Duplicate open" => $token]
+          unless $lang eq 'INTERCAL' ||
+                 $lang eq 'SQL' && $token =~ /^-+$/;
+    
+
+    foreach my $test_entry (@test_data) {
+        my ($test_name, $body) = @$test_entry;
+
+        my $comment = "$token$body\n";
+
+        $test -> match ($comment,
+                         test     => $test_name,
+                         captures => [[comment         => $comment],
+                                      [open_delimiter  => $token],
+                                      [body            => $body],
+                                      [close_delimiter => "\n"]]);
+    }
+}
+
+Test::NoWarnings::had_no_warnings () if $r;
+
+done_testing;
+
+
+__END__
+
 
 while (@data) {
     my ($lang, $flavour) = parse_lang shift @data;
@@ -187,7 +162,3 @@ while (@data) {
                                [body            => $_ [0]],
                                [close_delimiter => "\n"]]};
 }
-
-Test::NoWarnings::had_no_warnings () if $r;
-
-done_testing;
