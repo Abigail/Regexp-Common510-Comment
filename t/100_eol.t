@@ -39,8 +39,7 @@ foreach my $eol_entry (@eol_tokens) {
     );
 
     push @test_data => ["Duplicate open" => $token]
-          unless $lang eq 'INTERCAL' ||
-                 $lang eq 'SQL' && $token =~ /^-+$/;
+          unless $lang eq 'SQL' && $token =~ /^-+$/;
     
 
     foreach my $test_entry (@test_data) {
@@ -86,13 +85,7 @@ while (@data) {
             ["--"               =>  "SQL comment"],
          unless $lang eq 'SQL' && !$flavour;
 
-    if ($lang eq 'INTERCAL') {
-        push @fail =>
-            [$token                =>  "repeated opening delimiter"],
-            ["$token$token$token"  =>  "repeated opening delimiter"],
-        ;
-    }
-    elsif ($lang eq 'SQL' && !$flavour) {
+    if ($lang eq 'SQL' && !$flavour) {
         push @pass =>
             ["/* $token */"        =>  "C comment with opening delimiter"],
         ;
@@ -136,19 +129,6 @@ while (@data) {
         $Token =~ s/^.\K/ /;
         push @fail => ["$Token\n"       => "garbled opening delimiter"],
                       ["$Token $W $W\n" => "garbled opening delimiter"];
-    }
-
-    if ($lang eq 'INTERCAL') {
-        if (!state $seen_intercal ++) {
-            push @fail => ["PLEASE NOTE THIS DOES NOTHING", "Contains DO"],
-                          ["DO NOT DO THIS",                "Contains DO"],
-                          ["DO NOT OPEN PANDORA'S BOX",     "Contains DO"],
-        }
-        if ($token =~ /NOT/) {
-            push @pass => ["E THIS IS NOT A STATEMENT", "Extended start word"],
-                          ["E THE FLYING PIGS",         "Extended start word"],
-            ;
-        }
     }
 
     run_tests

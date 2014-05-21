@@ -11,6 +11,7 @@ t/500_pascal.t
 t/501_html.t
 t/502_brainfuck.t
 t/503_caml.t
+t/504_intercal.t
 t/950_pod.t
 t/960_pod_coverage.t
 t/990_kwalitee.t
