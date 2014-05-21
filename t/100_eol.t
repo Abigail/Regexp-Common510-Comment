@@ -66,11 +66,17 @@ foreach my $eol_entry (@eol_tokens) {
         ["Trailing space"              => "$token $body\n "],
         ["Leading space"               => " $token $body\n"],
     );
+    my $wrong_delim = $token eq '//'                        ? '/*'
+                    : $lang  eq 'PHP' || $lang eq 'Advisor' ? '--'
+                    :                                         '//';
+    push @fail_data => 
+        ["Wrong delimiter"             => "${wrong_delim} $body\n"];
 
     foreach my $entry (@fail_data) {
         my ($reason, $comment) = @$entry;
         $test -> no_match ($comment, reason => $reason);
     }
+
 }
 
 Test::NoWarnings::had_no_warnings () if $r;
