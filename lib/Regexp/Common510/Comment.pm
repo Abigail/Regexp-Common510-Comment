@@ -445,12 +445,13 @@ pattern $CATEGORY => "Caml",
 # Comments start with [PLEASE \s+][DO[\s*]](NOT|N'T), last till the
 # end of the line, and cannot contain DO.
 #
+my $AWS = "[\t\f\r ]";  # ASCII Whitespace; no newline.
 pattern $CATEGORY => "INTERCAL",
         -pattern  =>
-           "(?k<comment>:"                                                   .
-               "(?k<open_delimiter>:(?:PLEASE\\s+)?(?:DO\\s*)?(?:NOT|N'T))"  .
-               '(?k<body>:[^D\n]*(?:D(?!O)[^D\n]*)*)'                        .
-               '(?k<close_delimiter>:\n)'                                    .
+           "(?k<comment>:"                                                    .
+               "(?k<open_delimiter>:(?:PLEASE$AWS+)?(?:DO$AWS*)?(?:NOT|N'T))" .
+               '(?k<body>:[^D\n]*(?:D(?!O)[^D\n]*)*)'                         .
+               '(?k<close_delimiter>:\n)'                                     .
            ")"
 ;
 
