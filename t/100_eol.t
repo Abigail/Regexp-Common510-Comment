@@ -77,6 +77,14 @@ foreach my $eol_entry (@eol_tokens) {
         $test -> no_match ($comment, reason => $reason);
     }
 
+    if (length $token > 1 && $lang ne 'SQL') {
+        my $token = $token;  # Copy
+        chop $token;
+
+        $test -> no_match ("$token This is a comment ",
+                            reason => "Incomplete opening delimiter");
+    }
+
 }
 
 Test::NoWarnings::had_no_warnings () if $r;
@@ -127,22 +135,6 @@ while (@data) {
             ["--\n"              =>  "Missing space after --"],
             ["--$W\n"            =>  "Missing space after --"],
         ;
-    }
-
-    if ($lang ne 'Advisor' && $lang ne 'PHP') {
-        push @fail => ["//\n"       => "wrong opening delimiter"],
-                      ["// foo\n"   => "wrong opening delimiter"]
-                      unless $token eq '//';
-        push @fail => ["#\n"        => "wrong opening delimiter"],
-                      ["# \n"       => "wrong opening delimiter"]
-                      unless $token eq '#' || $flavour eq 'MySQL';
-
-    }
-    if (length ($token) > 1) {
-        my $Token = $token;
-        $Token =~ s/^.\K/ /;
-        push @fail => ["$Token\n"       => "garbled opening delimiter"],
-                      ["$Token $W $W\n" => "garbled opening delimiter"];
     }
 
     run_tests
