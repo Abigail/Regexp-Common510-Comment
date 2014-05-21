@@ -875,7 +875,7 @@ See L<< http://www.cs.caltech.edu/courses/cs134/cs134b/book.pdf >>
 =head1 DEVELOPMENT
 
 The current sources of this module are found on github,
-L<< git://github.com/Abigail/Regexp--Common510--Comment.git >>.
+L<< git://github.com/Abigail/Regexp-Common510-Comment.git >>.
 
 =head1 AUTHOR
 
