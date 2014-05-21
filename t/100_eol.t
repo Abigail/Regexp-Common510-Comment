@@ -54,6 +54,23 @@ foreach my $eol_entry (@eol_tokens) {
                                       [body            => $body],
                                       [close_delimiter => "\n"]]);
     }
+
+
+    my $body = "This is a comment";
+    my @fail_data = (
+        ["Only an opening delimiter"   =>  $token],
+        ["No trailing newline"         => "$token $body"],
+        ["Duplicate newline"           => "$token $body\n\n"],
+        ["Internal newline"            => "$token Hello\nworld\n\n"],
+        ["Duplicated comment"          => "$token $body\n" x 2],
+        ["Trailing space"              => "$token $body\n "],
+        ["Leading space"               => " $token $body\n"],
+    );
+
+    foreach my $entry (@fail_data) {
+        my ($reason, $comment) = @$entry;
+        $test -> no_match ($comment, reason => $reason);
+    }
 }
 
 Test::NoWarnings::had_no_warnings () if $r;
@@ -98,15 +115,6 @@ while (@data) {
         ;
     }
 
-    push @fail =>
-        [$token                    => "only opening delimiter"],
-        ["$token $W $W"            => "no trailing newline"],
-        ["$token $W \n\n"          => "duplicate newline"],
-        ["$token $W \n $W \n"      => "internal newline"],
-        ["$token $W\n$token $W\n"  => "duplicate comment"],
-        ["$token $W\n "            => "trailing space"],
-        [" $token $W\n"            => "leading space"],
-    ;
 
     if ($lang eq 'SQL' && $flavour eq 'MySQL') {
         push @fail =>
