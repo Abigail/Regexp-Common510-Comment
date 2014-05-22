@@ -40,10 +40,13 @@ my @test_data = (
     ["Normal comment"  => "This is a comment"],
     ["Space"           => " "],
     ["Unicode"         => "Pick up the \x{260F}!"],
+    ["Has newline"     => "This is\na comment"],
 );
 
 foreach my $entry (@test_data) {
     my ($name, $body) = @$entry;
+
+    goto NOT_EOL if $name eq 'Has newline';
 
     my $delimiter = "--";
     my $comment   = "$delimiter$body\n";
@@ -123,8 +126,9 @@ foreach my $entry (@test_data) {
                                captures => $captures);
     }
 
+  NOT_EOL:
     #
-    # PL/SQL also allows C-style comments
+    # PL/SQL and MySQL also allow C-style comments
     #
     my $open_delimiter  = "/*";
     my $close_delimiter = "*/";
@@ -136,7 +140,25 @@ foreach my $entry (@test_data) {
                      [body            => $body],
                      [close_delimiter => $close_delimiter]];
 
-    $test_plsql -> match ($comment,
+    foreach my $test ($test_mysql, $test_plsql) {
+        $test -> match ($comment,
+                         test     => $test_name,
+                         captures => $captures);
+    }
+
+    #
+    # And in MySQL, the C-style comment may be terminated by a ';'
+    #
+    $close_delimiter = ";";
+    $comment         = "$open_delimiter$body$close_delimiter";
+    $test_name       = "$name, mixed delimiters";
+
+    $captures  = [[comment         => $comment],
+                  [open_delimiter  => $open_delimiter],
+                  [body            => $body],
+                  [close_delimiter => $close_delimiter]];
+
+    $test_mysql -> match ($comment,
                            test     => $test_name,
                            captures => $captures);
 }
@@ -173,6 +195,9 @@ $test_plsql -> no_match ("/* This is a comment\n",
                           reason => "Mismatched delimiters");
 $test_plsql -> no_match ("-- This is a comment */",
                           reason => "Mismatched delimiters");
+
+$test_mysql -> no_match ("/* This is; a comment */",
+                          reason => "Semi-colon inside a C-style comment");
 
 
 Test::NoWarnings::had_no_warnings () if $r;
