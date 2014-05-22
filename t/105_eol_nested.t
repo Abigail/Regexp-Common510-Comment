@@ -2,43 +2,74 @@
 
 use 5.010;
 
+use Test::More 0.88;
+use Test::Regexp;
+use Regexp::Common510 'Comment';
+use t::Common;
+
 use strict;
 use warnings;
 no  warnings 'syntax';
 
-use Test::More 0.88;
-use Test::Regexp 2009121001;
-use t::Common;
-
 our $r = eval "require Test::NoWarnings; 1";
 
-use Regexp::Common510;
+foreach my $lang (@eol_nested) {
+    my $pattern      = RE (Comment => $lang);
+    my $keep_pattern = RE (Comment => $lang, -Keep => 1);
+    my $test = Test::Regexp:: -> new -> init (
+        keep_pattern => $pattern,
+        full_text    => 1,
+        name         => "$lang comment",
+    );
 
-my @data = (
-    Dylan            =>  '//',
-    Haskell          =>  '--',
-    Haskell          =>  '---',
-    Haskell          =>  '--------------',
-    Hugo             =>  '!',
-    SLIDE            =>  '#',
-);
+    my $keep_test    = Test::Regexp:: -> new -> init (
+        keep_pattern => $pattern,
+        full_text    => 1,
+        name         => "$lang comment",
+    );
 
-while (@data) {
-    my ($lang, $flavour) = parse_lang shift @data;
-    my  $token           =            shift @data;
+    my $eol_tokens = $eol_tokens {$lang};
 
-    my @pass;
-    my @fail;
+    foreach my $token (@$eol_tokens) {
+        my @test_data = (
+            ["Empty comment"   =>  ""],
+            ["Normal comment"  =>  "This is a comment"],
+            ["Space"           =>  " "],
+            ["Unicode"         => "Pick up the \x{260F}!"],
+            ["Duplicate open"  => $token],
+            ["Slashes"         => "//"],
+        );
+
+        foreach my $entry (@test_data) {
+            my ($test_name, $body) = @$entry;
+            my $comment  = "$token$body\n";
+            my $captures = [[comment => $comment],
+                            [open_delimiter  => $token],
+                            [body            => $body],
+                            [close_delimiter => "\n"]];
+
+            $test -> match ($comment,
+                             test     => $test_name,
+                             captures => $captures);
+        }
+    }
+}
+
+Test::NoWarnings::had_no_warnings () if $r;
+
+done_testing;
+
+__END__
 
     push @pass => 
-        [""                 =>  "empty body"],
-        ["$W $W"            =>  "standard body"],
-        ["$W \x{BB} $W"     =>  "Latin-1 in body"],
-        ["$W \x{4E00} $W"   =>  "Unicode in body"],
-        [$BIG               =>  "Large body"],
-        ["//"               =>  "slashes"],
-        [" "                =>  "body is a space"],
-        ["/* $token */"     =>  "C comment with opening delimiter"],
+        [""                  =>  "empty body"],
+        ["This is a comment" =>  "standard body"],
+        ["$W \x{BB} $W"      =>  "Latin-1 in body"],
+        ["$W \x{4E00} $W"    =>  "Unicode in body"],
+        [$BIG                =>  "Large body"],
+        ["//"                =>  "slashes"],
+        [" "                 =>  "body is a space"],
+        ["/* $token */"      =>  "C comment with opening delimiter"],
         ;
 
     if ($lang ne 'Haskell') {
