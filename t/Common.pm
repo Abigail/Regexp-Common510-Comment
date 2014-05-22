@@ -10,7 +10,7 @@ use warnings;
 no  warnings 'syntax';
 
 our @ISA      = qw [Exporter];
-our @EXPORT   = qw [%eol_tokens %nested_tokens
+our @EXPORT   = qw [%eol_tokens %from_to_tokens
                     @eol_nested @eol];
 
 
@@ -79,7 +79,7 @@ our %eol_tokens =  (
    'ZZT-OOP'                 =>  ["'"],
 );
 
-our %nested_tokens = (
+our %from_to_tokens = (
     Dylan                    => [['/*',  '*/']],
     Haskell                  => [['{-',  '-}']],
     Hugo                     => [['!\\', '\\!']],
