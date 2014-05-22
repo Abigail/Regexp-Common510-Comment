@@ -11,7 +11,7 @@ no  warnings 'syntax';
 
 our @ISA      = qw [Exporter];
 our @EXPORT   = qw [%eol_tokens %from_to_tokens
-                    @eol_nested @eol];
+                    @eol_nested @eol @nested @from_to];
 
 
 our %eol_tokens =  (
@@ -129,9 +129,14 @@ our %from_to_tokens = (
 
 
 our @eol_nested = (qw [Dylan Haskell Hugo SLIDE]);
+our @nested;
 our @eol = do {
     my %filter = map {$_ => 1} @eol_nested;
     grep {!$filter {$_}} keys %eol_tokens;
+};
+our @from_to = do {
+    my %filter = map {$_ => 1} @eol_nested, @nested;
+    grep {!$filter {$_}} keys %from_to_tokens;
 };
 
 
