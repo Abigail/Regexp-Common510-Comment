@@ -262,62 +262,51 @@ pattern $CATEGORY => 'Pascal',
         ;
 
 sub pascal {
-    my %arg = @_;
+    my %args = @_;
 
     my @patterns;
-    given ($arg {-flavour} // "") {
+    my $flavour = $args {-flavour} // "";
 
+    if ($flavour eq "" || $flavour eq "ISO") {
         #
         # http://www.pascal-central.com/docs/iso10206.txt
         #
-        when (["", "ISO"]) {
-            @patterns = "(?k<open_delimiter>:[{]|\Q(*\E)"         .
-                        "(?k<body>:[^}*]*(?:[*](?![)])[^}*]*)*)"  .
-                        "(?k<close_delimiter>:[}]|\Q*)\E)"
-            ;
-        }
-
+        @patterns = "(?k<open_delimiter>:[{]|\Q(*\E)"         .
+                    "(?k<body>:[^}*]*(?:[*](?![)])[^}*]*)*)"  .
+                    "(?k<close_delimiter>:[}]|\Q*)\E)"
+        ;
+    }
+    elsif ($flavour eq 'Alice') {
         #
         # http://www.templetons.com/brad/alice/language/
         #
-        when ("Alice") {
-            @patterns = "(?k<open_delimiter>:[{])"   .
-                        "(?k<body>:[^}\n]*)"         .
-                        "(?k<close_delimiter>:[}])"
-            ;
-        }
-
+        @patterns = "(?k<open_delimiter>:[{])"   .
+                    "(?k<body>:[^}\n]*)"         .
+                    "(?k<close_delimiter>:[}])"
+        ;
+    }
+    elsif ($flavour eq "Delphi" ||
+           $flavour eq "Free"   ||
+           $flavour eq "GPC"    ||
+           $flavour eq "Workshop") {
         #
         # http://info.borland.com/techpubs/delphi5/oplg/
         # http://www.freepascal.org/docs-html/ref/ref.html
+        # http://docs.sun.com/db/doc/802-5762
         # http://www.gnu-pascal.de/gpc/
         #
-        when (["Delphi", "Free", "GPC"]) {
-            push @patterns => eol '//';
-            continue;
-        }
-
-        #
-        # http://docs.sun.com/db/doc/802-5762
-        #
-        when (["Delphi", "Free", "GPC", "Workshop"]) {
-            push @patterns => from_to ('{', '}'),
-                              from_to ('(*', '*)')
-            ;
-            continue;
-        }
-
-        when (["Workshop"]) {
+        push @patterns => from_to ('{', '}'),
+                          from_to ('(*', '*)');
+        if ($flavour eq "Workshop") {
             push @patterns => from_to ('"',  '"'),
-                              from_to ('/*', '*/'),
-            ;
+                              from_to ('/*', '*/');
         }
-
-        default {
-            # Known flavours may fall through to this, hence the 
-            # test for @patterns.
-            die "Unknown -flavour '$_'" unless @patterns;
+        else {
+            push @patterns => eol '//';
         }
+    }
+    else {
+        die "Unknown -flavour '$_'";
     }
 
     local $" = "|";
@@ -334,28 +323,23 @@ pattern $CATEGORY => 'BASIC',
         ;
 
 sub basic {
-    my %arg = @_;
+    my %args = @_;
 
     my @patterns;
+    my $flavour = $args {-flavour} // "";
 
-    given ($arg {-flavour} // "") {
-        when ([""]) {
-            @patterns = eol "REM";
-        }
-
+    if ($flavour eq "") {
+        @patterns = eol "REM";
+    }
+    elsif ($flavour eq "mvEnterprise") {
         #
         # http://www.rainingdata.com/products/beta/docs/mve/50/
         #                                          ReferenceManual/Basic.pdf
         #
-        when (["mvEnterprise"]) {
-            @patterns = eol "[*!]|REM";
-        }
-
-        default {
-            # Known flavours may fall through to this, hence the 
-            # test for @patterns.
-            die "Unknown -flavour '$_'" unless @patterns;
-        }
+        @patterns = eol "[*!]|REM";
+    }
+    else {
+        die "Unknown -flavour '$_'";
     }
 
     local $" = "|";
@@ -468,40 +452,37 @@ pattern $CATEGORY => "INTERCAL",
 # as found on http://www.algol68.org/.
 # 
 sub algol68 {
-    my %arg = @_;
-    my $flavour = $arg {-flavour} // "";
+    my %args = @_;
+    my $flavour = $args {-flavour} // "";
     my @patterns;
     push @patterns => from_to ('#', '#');
 
-    given ($flavour) {
-        when ([""]) {
-            push @patterns => from_to ("\x{A2}", "\x{A2}"),
+    if ($flavour eq "") {
+        push @patterns => from_to ("\x{A2}", "\x{A2}"),
 
-                '(?k<open_delimiter>:\bco\b)'                     .
-                '(?k<body>:[^c]*(?:(?:\Bc|c(?!o\b))[^c]*)*)'      .
-                '(?k<close_delimiter>:\bco\b)',
+            '(?k<open_delimiter>:\bco\b)'                     .
+            '(?k<body>:[^c]*(?:(?:\Bc|c(?!o\b))[^c]*)*)'      .
+            '(?k<close_delimiter>:\bco\b)',
 
-                '(?k<open_delimiter>:\bcomment\b)'                .
-                '(?k<body>:[^c]*(?:(?:\Bc|c(?!omment\b))[^c]*)*)' .
-                '(?k<close_delimiter>:\bcomment\b)',
-            ;
-        }
-        when (["a68toc"]) {
-            push @patterns => from_to ("{", "}"),
+            '(?k<open_delimiter>:\bcomment\b)'                .
+            '(?k<body>:[^c]*(?:(?:\Bc|c(?!omment\b))[^c]*)*)' .
+            '(?k<close_delimiter>:\bcomment\b)',
+        ;
+    }
+    elsif ($flavour eq "a68toc") {
+       push @patterns => from_to ("{", "}"),
 
-                '(?k<open_delimiter>:\bCO\b)'                     .
-                '(?k<body>:[^C]*(?:(?:\BC|C(?!O\b))[^C]*)*)'      .
-                '(?k<close_delimiter>:\bCO\b)',
+           '(?k<open_delimiter>:\bCO\b)'                     .
+           '(?k<body>:[^C]*(?:(?:\BC|C(?!O\b))[^C]*)*)'      .
+           '(?k<close_delimiter>:\bCO\b)',
 
-                '(?k<open_delimiter>:\bCOMMENT\b)'                .
-                '(?k<body>:[^C]*(?:(?:\BC|C(?!OMMENT\b))[^C]*)*)' .
-                '(?k<close_delimiter>:\bCOMMENT\b)',
-            ;
-        }
-
-        default {
-            die "Unknown -flavour '$_'";
-        }
+           '(?k<open_delimiter>:\bCOMMENT\b)'                .
+           '(?k<body>:[^C]*(?:(?:\BC|C(?!OMMENT\b))[^C]*)*)' .
+           '(?k<close_delimiter>:\bCOMMENT\b)',
+       ;
+    }
+    else {
+        die "Unknown -flavour '$_'";
     }
 
     local $" = "|";
