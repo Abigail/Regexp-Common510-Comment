@@ -36,11 +36,8 @@ foreach my $eol_entry (@eol_tokens) {
         ["Normal comment"  =>  "This is a comment"],
         ["Space"           =>  " "],
         ["Unicode"         => "Pick up the \x{260F}!"],
+        ["Duplicate open"  => $token],
     );
-
-    push @test_data => ["Duplicate open" => $token]
-          unless $lang eq 'SQL' && $token =~ /^-+$/;
-    
 
     foreach my $test_entry (@test_data) {
         my ($test_name, $body) = @$test_entry;
@@ -77,7 +74,7 @@ foreach my $eol_entry (@eol_tokens) {
         $test -> no_match ($comment, reason => $reason);
     }
 
-    if (length $token > 1 && $lang ne 'SQL') {
+    if (length $token > 1) {
         my $token = $token;  # Copy
         chop $token;
 
@@ -129,13 +126,6 @@ while (@data) {
         ;
     }
 
-
-    if ($lang eq 'SQL' && $flavour eq 'MySQL') {
-        push @fail =>
-            ["--\n"              =>  "Missing space after --"],
-            ["--$W\n"            =>  "Missing space after --"],
-        ;
-    }
 
     run_tests
         pass          => \@pass,
