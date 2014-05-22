@@ -13,6 +13,7 @@ t/502_brainfuck.t
 t/503_caml.t
 t/504_intercal.t
 t/505_sql.t
+t/506_algol.t
 t/950_pod.t
 t/960_pod_coverage.t
 t/990_kwalitee.t

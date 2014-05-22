@@ -80,15 +80,6 @@ our %eol_tokens =  (
 );
 
 our %from_to_tokens = (
-   'Algol 60'                => [['comment', ';']],
-   'Algol 68'                => [["\x{A2}",  "\x{A2}"],
-                                 ['#',       '#'],
-                                 ['co',      'co'],
-                                 ['comment', 'comment']],
-   'Algol 68,a68toc'         => [['{',       '}'],
-                                 ['#',       '#'],
-                                 ['CO',      'CO'],
-                                 ['COMMENT', 'COMMENT']],
     ALPACA                   => [['/*',      '*/']],
     B                        => [['/*',      '*/']],
    'Befunge-98'              => [[';',       ';']],
