@@ -47,9 +47,11 @@ foreach my $lang (@eol_nested) {
             ["Normal comment"  =>  "This is a comment"],
             ["Space"           =>  " "],
             ["Unicode"         => "Pick up the \x{260F}!"],
-            ["Duplicate open"  => $token],
             ["Slashes"         => "//"],
         );
+
+        push @test_data => ["Duplicate open"  => $token]
+              unless $lang eq 'Haskell';
 
         foreach my $entry (@test_data) {
             my ($test_name, $body) = @$entry;
