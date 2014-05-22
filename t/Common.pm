@@ -10,7 +10,7 @@ use warnings;
 no  warnings 'syntax';
 
 our @ISA      = qw [Exporter];
-our @EXPORT   = qw [@eol_tokens];
+our @EXPORT   = qw [@eol_tokens @eol_nested %eol_tokens %nested_tokens];
 
 our @eol_tokens = (
   ['2Iota'                   =>  '//'],
@@ -76,6 +76,23 @@ our @eol_tokens = (
    [vi                       =>  '"'], 
    [zonefile                 =>  ';'],
   ['ZZT-OOP'                 =>  "'"],
+);
+
+
+our @eol_nested = (qw [Dylan Haskell Hugo SLIDE]);
+
+our %eol_tokens =  (
+    Dylan      => ['//'],
+    Haskell    => ['--', '---', '--------------'],
+    Hugo       => ['!'],
+    SLIDE      => ['#'],
+);
+
+our %nested_tokens = (
+    Dylan      => [['/*',  '*/']],
+    Haskell    => [['{-',  '-}']],
+    Hugo       => [['!\\', '\\!']],
+    SLIDE      => [['(*',  '*)']],
 );
 
 
