@@ -370,24 +370,24 @@ pattern $CATEGORY => 'SQL',
 
 
 sub sql {
-    my %arg = @_;
+    my %args = @_;
 
     my @patterns;
 
-    given ($arg {-flavour} // "") {
-        when ([""]) {
-            @patterns = eol "-{2,}";
-        }
+    my $flavour = $args {-flavour} // "";
 
-        when (["MySQL"]) {
-            push @patterns => eol '#|-- ';
-            push @patterns =>
-                q {(?k<open_delimiter>:/[*])}                       .
-                q {(?k<body>:[^"';*]*}          .
-                     q {(?:(?:"[^"]*"|'[^']*'|[*](?!/))[^"';*]*)*)} .
-                q {(?k<close_delimiter>:[*]/|;)};
-        }
-
+    if ($flavour eq "") {
+        @patterns = eol "-{2,}";
+    }
+    elsif ($flavour eq "MySQL") {
+        push @patterns => eol '#|-- ';
+        push @patterns =>
+            q {(?k<open_delimiter>:/[*])}                       .
+            q {(?k<body>:[^"';*]*}          .
+                 q {(?:(?:"[^"]*"|'[^']*'|[*](?!/))[^"';*]*)*)} .
+            q {(?k<close_delimiter>:[*]/|;)};
+    }
+    elsif ($flavour eq "PL/SQL") {
         #
         # http://download.oracle.com/docs/cd/B19306_01/server.102/
         #                                    b14200/sql_elements006.htm
@@ -399,17 +399,12 @@ sub sql {
         #
         # These restrictions are ignored.
         #
-        when (["PL/SQL"]) {
-            push @patterns => eol     '--',
-                              from_to '/*' => '*/'
-            ;
-        }
-
-        default {
-            # Known flavours may fall through to this, hence the 
-            # test for @patterns.
-            die "Unknown -flavour '$_'" unless @patterns;
-        }
+        push @patterns => eol     '--',
+                          from_to '/*' => '*/'
+        ;
+    }
+    else {
+        die "Unknown -flavour '$_'";
     }
 
     local $" = "|";
