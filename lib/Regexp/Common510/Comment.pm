@@ -136,7 +136,6 @@ my @eol_from_to = (
 
 
 my @nested = (
-    Caml             =>  '(*',  '*)',
    'Modula-2'        =>  '(*',  '*)',
    'Modula-3'        =>  '(*',  '*)',
 );
