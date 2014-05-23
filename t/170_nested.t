@@ -2,17 +2,17 @@
 
 use 5.010;
 
+use Test::More 0.88;
+use Test::Regexp;
+use Regexp::Common510 'Comment';
+use t::Common;
+
 use strict;
 use warnings;
 no  warnings 'syntax';
 
-use Test::More 0.88;
-use Test::Regexp 2009121001;
-use t::Common;
-
 our $r = eval "require Test::NoWarnings; 1";
 
-use Regexp::Common510;
 
 my @data = (
     Dylan            =>  '/*',      '*/',
