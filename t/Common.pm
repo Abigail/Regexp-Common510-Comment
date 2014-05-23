@@ -93,6 +93,7 @@ our %from_to_tokens = (
                                  ['//',      "\x{0085}"],
                                  ['//',      "\x{2028}"],
                                  ['//',      "\x{2029}"]],
+    Caml                     => [['(*',      '*)']],
     Cg                       => [['/*',      '*/']],
     Dylan                    => [['/*',      '*/']],
     ECMAScript               => [['/*',      '*/']],
@@ -105,6 +106,8 @@ our %from_to_tokens = (
     Java                     => [['/*',      '*/']],
     JavaScript               => [['/*',      '*/']],
     LPC                      => [['/*',      '*/']],
+   'Modula-2'                => [['(*',      '*)']],
+   'Modula-3'                => [['(*',      '*)']],
     Nickle                   => [['/*',      '*/']],
     PEARL                    => [['/*',      '*/']],
     PHP                      => [['/*',      '*/']],
@@ -120,7 +123,7 @@ our %from_to_tokens = (
 
 
 our @eol_nested = (qw [Dylan Haskell Hugo SLIDE]);
-our @nested;
+our @nested;    =  qw [Caml Modula-2 Modula-3];
 our @eol = do {
     my %filter = map {$_ => 1} @eol_nested;
     grep {!$filter {$_}} keys %eol_tokens;
