@@ -2,17 +2,16 @@
 
 use 5.010;
 
+use Test::More 0.88;
+use Test::Regexp;
+use Regexp::Common510 'Comment';
+use t::Common;
+
 use strict;
 use warnings;
 no  warnings 'syntax';
 
-use Test::More 0.88;
-use Test::Regexp 2009121001;
-use t::Common;
-
 our $r = eval "require Test::NoWarnings; 1";
-
-use Regexp::Common510;
 
 my $SPACE   = " ";        # Space
 my $SEPCHAR = "\t";       # Tab
@@ -22,17 +21,21 @@ my $MDO     = "<!";
 my $MDC     = ">";
 my $COM     = "--";
 
-my $pattern1 = RE Comment => 'HTML'; 
-my $pattern2 = RE Comment => 'HTML', -Keep => 1;
-ok $pattern1, no_nl "Got a pattern for HTML: qr {$pattern1}";
-ok $pattern2, no_nl "Got a keep pattern for HTML: qr {$pattern2}";
+my $pattern      = RE Comment => 'HTML'; 
+my $keep_pattern = RE Comment => 'HTML', -Keep => 1;
 
 my $checker = Test::Regexp -> new -> init (
-    pattern      => $pattern1,
-    keep_pattern => $pattern2,
-    name         => "Comment HTML",
+    pattern      => $pattern,
+    keep_pattern => $keep_pattern,
+    name         => "HTML Comment",
 );
 
+
+Test::NoWarnings::had_no_warnings () if $r;
+
+done_testing;
+
+__END__
 
 my @valid = (
     ["",             "empty body"],
@@ -157,7 +160,3 @@ run_tests
     }
 ;
 
-
-Test::NoWarnings::had_no_warnings () if $r;
-
-done_testing;
