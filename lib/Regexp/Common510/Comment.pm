@@ -525,10 +525,10 @@ sub sgml {
         $comment = "[^$h]*(?:$h(?!$t)[^$h]*)*";
     }
 
-    "(?k<comment>:"                                                        .
-        "(?k<MDO>:$MDO)"                                                   .
-            "(?k<body>:(?:(?k<COM>:$COM)(?k<comment>:$comment)$COM$WS*)*)" .
-        "(?k<MDC>:$MDC)"                                                   .
+    "(?k<comment>:"                                                       .
+        "(?k<MDO>:$MDO)"                                                  .
+            "(?k<bodies>:(?:(?k<COM>:$COM)(?k<body>:$comment)$COM$WS*)*)" .
+        "(?k<MDC>:$MDC)"                                                  .
     ")";
 }
 
