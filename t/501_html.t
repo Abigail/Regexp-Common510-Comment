@@ -24,11 +24,99 @@ my $COM     = "--";
 my $pattern      = RE Comment => 'HTML'; 
 my $keep_pattern = RE Comment => 'HTML', -Keep => 1;
 
-my $checker = Test::Regexp -> new -> init (
+my $test = Test::Regexp -> new -> init (
     pattern      => $pattern,
     keep_pattern => $keep_pattern,
+    full_text    =>  1,
     name         => "HTML Comment",
 );
+
+my @pass_data = (
+    ["Empty comment"         => ""],
+    ["Space comment"         => " "],
+    ["Newline comment"       => "\n"],
+    ["Normal comment"        => "This is a comment"],
+    ["Comment with Unicode"  => "Pick up the \x{260F}!"],
+    ["Dash as comment"       => "- "],
+    ["Dashes in comment"     => "This - is - a - comment"],
+    ["Fake close"            => ">"],
+    ["Fake close 2"          => "This is > a comment"],
+    ["Fake open"             => "<!"],
+    ["Fake open 2"           => "\n<! This is a comment"],
+);
+
+my @spaces =  ("", $SPACE, "$RE$SEPCHAR$SPACE$RS");
+
+foreach my $entry (@pass_data) {
+    my ($test_name, $body) = @$entry;
+    foreach my $space (@spaces) {
+        my  $comment = "$MDO$COM$body$COM$space$MDC";
+        my  $captures = [
+            [comment          =>  $comment],
+            [MDO              =>  $MDO],
+            [bodies           => "$COM$body$COM$space"],
+            [COM              =>  $COM],
+            [body             =>  $body],
+            [MDC              =>  $MDC],
+        ];
+
+        $test -> match ($comment,
+                        test     => $test_name,
+                        captures => $captures);
+    }
+}
+
+for (my $i = 0; $i < @pass_data; $i ++) {
+    my $j = 1 * $i ** 2;
+    my $space1   =  $spaces [$i % @spaces];
+    my $space2   =  $spaces [$j % @spaces];
+    my $body1    =  $pass_data [$i] [1];
+    my $body2    =  $pass_data [$j % @pass_data] [1];
+    my $comment  = "$MDO$COM$body1$COM$space1$COM$body2$COM$space2$MDC";
+    my $captures = [
+        [comment          =>  $comment],
+        [MDO              =>  $MDO],
+        [bodies           => "$COM$body1$COM$space1$COM$body2$COM$space2"],
+        [COM              =>  $COM],
+        [body             =>  $body2],
+        [MDC              =>  $MDC],
+    ];
+
+    $test -> match ($comment,
+                     test     => "Multiple comments",
+                     captures => $captures);
+}
+
+my $bodies   = join $SPACE => map {"$COM$_$COM"} map {$$_ [1]} @pass_data;
+my $comment  = "$MDO$bodies$MDC";
+my $captures = [
+    [comment          =>  $comment],
+    [MDO              =>  $MDO],
+    [bodies           =>  $bodies],
+    [COM              =>  $COM],
+    [body             =>  $pass_data [-1] [1]],
+    [MDC              =>  $MDC],
+];
+
+$test -> match ($comment,
+                 test     => "Many comments",
+                 captures => $captures);
+
+$bodies   = "$COM$COM" x 40;
+$comment  = "$MDO$bodies$MDC";
+$captures = [
+    [comment          =>  $comment],
+    [MDO              =>  $MDO],
+    [bodies           =>  $bodies],
+    [COM              =>  $COM],
+    [body             =>   ""],
+    [MDC              =>  $MDC],
+];
+
+$test -> match ($comment,
+                 test     => "Many empty comments",
+                 captures => $captures);
+
 
 
 Test::NoWarnings::had_no_warnings () if $r;
@@ -37,21 +125,6 @@ done_testing;
 
 __END__
 
-my @valid = (
-    ["",             "empty body"],
-    [" ",            "body is space"],
-    ["\n",           "body is newline"],
-    ["$W",           "standard body"],
-    ["$W $W",        "standard body"],
-    ["$W\n$W",       "newline in body"],
-    [" - ",          "dash"],
-    [" - $W - ",     "dashes"],
-    [" /* */ ",      "C comment"],
-    [" /* $W */ ",   "C comment"],
-    ["> $W ",        "Fake close"],
-    ["\n <!",        "Fake open"],
-    ["> <!",         "Fake open/close"],
-);
 
 my @invalid = (
     ["<!-- -- -->",   "COM inside"],
