@@ -117,6 +117,37 @@ $test -> match ($comment,
                  test     => "Many empty comments",
                  captures => $captures);
 
+my @fail_data = (
+    ["Empty string"       =>  ""],
+    ["No MDO"             =>  "--This is not a comment-->"],
+    ["No MDC"             =>  "<!--This is not a comment>"],
+    ["No COM"             =>  "<!This is not a comment-->"],
+    ["No COM"             =>  "<!--This is not a comment>"],
+    ["Incorrect COM"      =>  "<!-This is not a comment-->"],
+    ["Incorrect COM"      =>  "<!--This is not a comment->"],
+    ["Trailing newline"   =>  "<!--This is not a comment-->\n"],
+    ["Leading space"      =>  " <!--This is not a comment-->"],
+    ["Space after MDO"    =>  "<! --This is not a comment-->"],
+    ["COM too long"       =>  "<!--This is not a comment--->"],
+    ["Odd number of COMs" =>  "<!--This is--not a comment-->"],
+    ["Too many dashes"    =>  "<!" . ("--" x 40) . "->"],
+    ["Too many dashes"    =>  "<!" . ("--" x 40) . "-->"],
+    ["Too many dashes"    =>  "<!" . ("--" x 40) . "--->"],
+#   ["No COM"             =>  "<!>"],
+    ["Incomplete COMs"    =>  "<!->"],
+    ["Incomplete COMs"    =>  "<!-->"],
+    ["Incomplete COMs"    =>  "<!--->"],
+    ["Non whitespace between COMs" =>
+                              "<!--This is not a comment--, " .
+                                "--This is not a comment-->"],
+);
+
+foreach my $entry (@fail_data) {
+    my ($reason, $subject) = @$entry;
+
+    $test -> no_match ($subject, reason => $reason);
+}
+
 
 
 Test::NoWarnings::had_no_warnings () if $r;
