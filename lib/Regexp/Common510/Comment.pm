@@ -527,7 +527,7 @@ sub sgml {
 
     "(?k<comment>:"                                                       .
         "(?k<MDO>:$MDO)"                                                  .
-            "(?k<bodies>:(?:(?k<COM>:$COM)(?k<body>:$comment)$COM$WS*)*)" .
+            "(?k<bodies>:(?:(?k<COM>:$COM)(?k<body>:$comment)$COM$WS*)+)" .
         "(?k<MDC>:$MDC)"                                                  .
     ")";
 }
