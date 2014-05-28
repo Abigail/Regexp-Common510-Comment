@@ -533,7 +533,21 @@ sub sgml {
 }
 
 pattern $CATEGORY => 'HTML',
-        -pattern  => sgml (-MDO => "<!", -MDC => ">", -COM => "--")
+        -config   => {-flavour => undef},
+        -pattern  => sub {
+            my %args    = @_;
+            my $flavour = $args {-flavour} // "";
+
+            if ($flavour eq "") {
+                1;
+            }
+            elsif (lc $flavour eq 'sgml') {
+                return sgml (-MDO => "<!", -MDC => ">", -COM => "--")
+            }
+            else {
+                die "Unknown -flavour '$flavour'\n";
+            }
+        }
 ;
          
 

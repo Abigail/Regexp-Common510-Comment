@@ -21,8 +21,8 @@ my $MDO     = "<!";
 my $MDC     = ">";
 my $COM     = "--";
 
-my $pattern      = RE Comment => 'HTML'; 
-my $keep_pattern = RE Comment => 'HTML', -Keep => 1;
+my $pattern      = RE Comment => 'HTML', -flavour => 'sgml'; 
+my $keep_pattern = RE Comment => 'HTML', -flavour => 'sgml', -Keep => 1;
 
 my $test = Test::Regexp -> new -> init (
     pattern      => $pattern,
