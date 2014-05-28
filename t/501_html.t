@@ -72,6 +72,8 @@ my @fail_data = (
                                            "--This is also a comment-->"],
     ["Space after closing dahses"    =>  "<!--This is a comment-- >"],
     ["Too many dashes"               =>  "<!" . ("----" x 40) . ">"],
+    ["Trailing newline"              =>  "<!--This is a comment-->\n"],
+    ["Leading space"                 =>  " <!--This is a comment-->"],
 );
 
 
