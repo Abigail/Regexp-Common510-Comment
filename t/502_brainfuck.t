@@ -13,49 +13,50 @@ no  warnings 'syntax';
 
 our $r = eval "require Test::NoWarnings; 1";
 
-
 my @alphabet = qw { < > [ ] + - . , };
 
-my $pattern1 = RE Comment => 'Brainfuck'; 
-my $pattern2 = RE Comment => 'Brainfuck', -Keep => 1;
-ok $pattern1, no_nl "Got a pattern for HTML: qr {$pattern1}";
-ok $pattern2, no_nl "Got a keep pattern for HTML: qr {$pattern2}";
+my $pattern      = RE Comment => 'Brainfuck'; 
+my $keep_pattern = RE Comment => 'Brainfuck', -Keep => 1;
 
-my $checker = Test::Regexp -> new -> init (
-    pattern      => $pattern1,
-    keep_pattern => $pattern2,
-    name         => "Comment Brainfuck",
+my $test = Test::Regexp -> new -> init (
+    pattern      => $pattern,
+    keep_pattern => $keep_pattern,
+    name         => "Brainfuck Comment",
 );
 
-
-my @valid = (
-    [" ",            "space"],
-    ["\n",           "newline"],
-    ["$W",           "word"],
-    ["$W $W",        "words"],
-    ["$W\n$W",       "newline in body"],
-    ["/* */",        "C comment"],
+my @pass_data = (
+    ["Space comment"    =>  " "],
+    ["Newline comment"  =>  "\n"],
+    ["Text comment"     =>  "This is a comment"],
+    ["C-style comment"  =>  "/* */"],
 );
 
-my @invalid = (
-    ["",             "Empty string"],
-    ["<>",           "Contains commands"],
-);
-
-foreach my $char (@alphabet) {
-    push @invalid => ["$W $char $W" => "Contains command"],
+foreach my $entry (@pass_data) {
+    my ($test_name, $comment) = @$entry;
+    my  $captures = [
+        [comment  =>  $comment],
+        [body     =>  $comment],
+    ];
+    $test -> match ($comment,
+                     test     => $test_name,
+                     captures => $captures);
 }
 
-run_tests
-    pass          => \@valid,
-    fail          => \@invalid,
-    checker       => $checker,
-    make_subject  => sub {$_ [0]},
-    make_captures => sub {[
-        [comment         => $_ [0]],
-        [body            => $_ [0]],
-    ]}
-;
+
+my @fail_data = (
+    ["Empty string"   =>  ""],
+);
+foreach my $char (@alphabet) {
+    push @fail_data => 
+        ["Contains $char character"  =>  "This is $char a comment"];
+}
+
+foreach my $entry (@fail_data) {
+    my ($reason, $subject) = @$entry;
+
+    $test -> no_match ($subject, reason => $reason);
+}
+
 
 Test::NoWarnings::had_no_warnings () if $r;
 
