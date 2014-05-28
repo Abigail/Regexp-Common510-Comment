@@ -2,31 +2,36 @@
 
 use 5.010;
 
+use Test::More 0.88;
+use Test::Regexp;
+use Regexp::Common510 'Comment';
+use t::Common;
+
 use strict;
 use warnings;
 no  warnings 'syntax';
 
-use Test::More 0.88;
-use Test::Regexp 2009121001;
-use t::Common;
-
 our $r = eval "require Test::NoWarnings; 1";
 
-use Regexp::Common510;
+my $pattern      = RE Comment => 'Caml'; 
+my $keep_pattern = RE Comment => 'Caml', -Keep => 1;
 
-my $pattern1 = RE Comment => 'Caml'; 
-my $pattern2 = RE Comment => 'Caml', -Keep => 1;
-ok $pattern1, no_nl "Got a pattern for Caml: qr {$pattern1}";
-ok $pattern2, no_nl "Got a keep pattern for Caml: qr {$pattern2}";
-
-my $checker = Test::Regexp -> new -> init (
-    pattern      => $pattern1,
-    keep_pattern => $pattern2,
-    name         => "Comment Caml",
+my $test = Test::Regexp -> new -> init (
+    pattern      => $pattern,
+    keep_pattern => $keep_pattern,
+    name         => "Caml Comment",
 );
 
 my $open  = '(*';
 my $close = '*)';
+
+
+Test::NoWarnings::had_no_warnings () if $r;
+
+done_testing;
+
+
+__END__
 
 my $nest = $W;
    $nest = "$open$nest$close" for 1 .. 100;
@@ -112,7 +117,3 @@ run_tests
         [close_delimiter => $close],
     ]}
 ;
-
-Test::NoWarnings::had_no_warnings () if $r;
-
-done_testing;
