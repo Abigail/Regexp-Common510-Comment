@@ -28,7 +28,7 @@ my $test = Test::Regexp -> new -> init (
     pattern      => $pattern,
     keep_pattern => $keep_pattern,
     full_text    =>  1,
-    name         => "HTML Comment",
+    name         => "HTML Comment (old school)",
 );
 
 my @pass_data = (

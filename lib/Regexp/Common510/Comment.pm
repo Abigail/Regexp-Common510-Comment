@@ -539,7 +539,29 @@ pattern $CATEGORY => 'HTML',
             my $flavour = $args {-flavour} // "";
 
             if ($flavour eq "") {
-                1;
+                #
+                # http://www.w3.org/html/wg/drafts/html/master/syntax.html
+                #                                                    #comments
+                #
+                # Comments must start with the four character sequence
+                # U+003C LESS-THAN SIGN, U+0021 EXCLAMATION MARK,
+                # U+002D HYPHEN-MINUS, U+002D HYPHEN-MINUS (<!--). Following
+                # this sequence, the comment may have text, with the additional
+                # restriction that the text must not start with a single ">"
+                # (U+003E) character, nor start with a U+002D HYPHEN-MINUS
+                # character (-) followed by a ">" (U+003E) character, nor
+                # contain two consecutive U+002D HYPHEN-MINUS characters (--),
+                # nor end with a U+002D HYPHEN-MINUS character (-). Finally,
+                # the comment must be ended by the three character sequence
+                # U+002D HYPHEN-MINUS, U+002D HYPHEN-MINUS,
+                # U+003E GREATER-THAN SIGN (-->).
+                #
+                return
+                  "(?k<comment>:"                               .
+                      "(?k<open_delimiter>:<!--)"               .
+                          "(?k<body>:(?!-?>)[^-]*(?:-[^-]+)*)"  .
+                      "(?k<close_delimiter>:-->)"               .
+                  ")";
             }
             elsif (lc $flavour eq 'sgml') {
                 return sgml (-MDO => "<!", -MDC => ">", -COM => "--")

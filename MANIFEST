@@ -8,6 +8,7 @@ t/105_eol_nested.t
 t/150_from_to.t
 t/170_nested.t
 t/500_pascal.t
+t/501_html.t
 t/501_html_sgml.t
 t/502_brainfuck.t
 t/503_caml.t
