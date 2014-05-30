@@ -35,7 +35,10 @@ my $close = '*)';
 
 
 my @pass_data = (
-    ["Empty body"    =>   ""],
+    ["Empty body"         =>   ""],
+    ["Space body"         =>   " "],
+    ["Newline as comment" =>  "\n"],
+    ["Regular comment"    =>  "This is a comment"],
 );
 
 foreach my $entry (@pass_data) {
