@@ -17,14 +17,45 @@ my $pattern      = RE Comment => 'Caml';
 my $keep_pattern = RE Comment => 'Caml', -Keep => 1;
 
 my $test = Test::Regexp -> new -> init (
-    pattern      => $pattern,
-    keep_pattern => $keep_pattern,
-    name         => "Caml Comment",
+    keep_pattern    => $pattern,
+    no_keep_message => 1,
+    name            => "Caml Comment",
 );
+
+my $keep_test = Test::Regexp -> new -> init (
+    keep_pattern    => $keep_pattern,
+    name            => "Caml Comment",
+);
+
+my ($tag)      = $pattern      =~ /(__RC_Comment_[^>]+)>/;
+my ($keep_tag) = $keep_pattern =~ /(__RC_Comment_[^>]+)>/;
 
 my $open  = '(*';
 my $close = '*)';
 
+
+my @pass_data = (
+    ["Empty body"    =>   ""],
+);
+
+foreach my $entry (@pass_data) {
+    my ($test_name, $body) = @$entry;
+    my $comment = "$open$body$close";
+    my $captures      = [[$tag            => $comment]],
+    my $keep_captures = [[$keep_tag       => $comment],
+                         [comment         => $comment],
+                         [open_delimiter  => $open],
+                         [body            => $body],
+                         [close_delimiter => $close]];
+
+    $test -> match ($comment,
+                     test     => $test_name,
+                     captures => $captures);
+    $keep_test -> match ($comment,
+                          test     => $test_name,
+                          captures => $keep_captures);
+}
+     
 
 Test::NoWarnings::had_no_warnings () if $r;
 
