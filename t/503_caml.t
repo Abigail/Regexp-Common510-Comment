@@ -39,6 +39,7 @@ my @pass_data = (
     ["Space body"         =>   " "],
     ["Newline as comment" =>  "\n"],
     ["Regular comment"    =>  "This is a comment"],
+    ["Unicode"            => "Pick up the \x{260F}!"],
 );
 
 foreach my $entry (@pass_data) {
