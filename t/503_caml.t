@@ -56,6 +56,38 @@ my @pass_data = (
     ["String inside"                 => 'This is "a comment"'],
     ["Open delimiter inside string"  => 'This "${open}" is a comment'],
     ["Close delimiter inside string" => 'This "${close}" is a comment'],
+
+    #
+    # Quotes
+    #
+    ["Single quote"           => "This is 'a comment"],
+    ["Single quote"           => "This is 'a' comment"],
+    ["Escaping"               => 'This is \a comment'],
+);
+
+my @fail_data = (
+    ["Empty string"           => ""],
+    ["No open delimiter"      => "This is a comment $close"],
+    ["No close delimiter"     => "$open This is a comment"],
+    ["Leading whitespace"     => " $open This is a comment $close"],
+    ["Trailing newline"       => "$open This is a comment $close\n"],
+    ["Incomplete delimiter"   => "(This is a comment $close"],
+    ["Incomplete delimiter"   => "*This is a comment $close"],
+    ["Incomplete delimiter"   => "$open This is a comment *"],
+    ["Incomplete delimiter"   => "$open This is a comment )"],
+
+    #
+    # Incorrect nesting
+    #
+    ["Incorrect nesting"      => "$open This is $open a comment $close"],
+    ["Incorrect nesting"      => "$open This is $close a comment $close"],
+    ["Incorrect nesting"      => "$open This is $close $open a comment $close"],
+
+    #
+    # Quotes
+    #
+    ["Unclosed double quote"   => qq {$open This is "a comment $close}],
+    ["Single quote in literal" => qq {$open This is "'"a comment $close}],
 );
 
 foreach my $entry (@pass_data) {
@@ -74,6 +106,13 @@ foreach my $entry (@pass_data) {
     $keep_test -> match ($comment,
                           test     => $test_name,
                           captures => $keep_captures);
+}
+
+foreach my $entry (@fail_data) {
+    my ($reason, $subject) = @$entry;
+
+    $test      -> no_match ($subject, reason => $reason);
+    $keep_test -> no_match ($subject, reason => $reason);
 }
      
 
