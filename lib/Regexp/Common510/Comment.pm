@@ -407,12 +407,14 @@ pattern $CATEGORY => "Caml",
             my $esc = '\\\\';
             my $str = # String literal
                 qq {"[^'"$esc]*} .
-                qq {(?:$esc(?:[nrtb $esc'"]|[0-9]{3}|x[0-9a-fA-F]{2})[^'"$esc]*)*"};
+                qq {(?:$esc(?:[nrtb $esc'"]|[0-9]{3}|x[0-9a-fA-F]{2})} .
+                qq {[^'"$esc]*)*"};
             "(?<$tag>" .
-                "(?k<comment>:" .
-                   "(?k<open_delimiter>:\Q(*\E)"  .
-                   qq {(?k<body>:[^(*"]*(?:(?:(?:$str)|[(](?![*])|[*](?![)])|(?&$tag))[^(*"]*)*)} .
-                   "(?k<close_delimiter>:\Q*)\E)" .
+                "(?k<comment>:"                                        .
+                   "(?k<open_delimiter>:\Q(*\E)"                       .
+                       qq {(?k<body>:[^(*"]*(?:(?:(?:$str)|}           .
+                       qq {[(](?![*])|[*](?![)])|(?&$tag))[^(*"]*)*)}  .
+                   "(?k<close_delimiter>:\Q*)\E)"                      .
             "))"
         };
 
