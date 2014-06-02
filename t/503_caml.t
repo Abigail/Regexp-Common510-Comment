@@ -40,6 +40,14 @@ my @pass_data = (
     ["Newline as comment" =>  "\n"],
     ["Regular comment"    =>  "This is a comment"],
     ["Unicode"            => "Pick up the \x{260F}!"],
+    #
+    # A couple of 'nested' cases
+    #
+    ["Nested comment"        => "This is ${open} a ${close} comment"],
+    ["Double nested comment" => "This ${open} is ${open} a " .
+                                "${close} comment ${close}"],
+    ["Multi nested comment"  => "${open} This ${close} ${open} is " .
+                                "${open} a ${close}${close} comment"],
 );
 
 foreach my $entry (@pass_data) {
