@@ -48,6 +48,12 @@ my @pass_data = (
                                 "${close} comment ${close}"],
     ["Multi nested comment"  => "${open} This ${close} ${open} is " .
                                 "${open} a ${close}${close} comment"],
+    #
+    # With string literals
+    #
+    ["String inside"                 => 'This is "a comment"'],
+    ["Open delimiter inside string"  => 'This "${open}" is a comment'],
+    ["Close delimiter inside string" => 'This "${close}" is a comment'],
 );
 
 foreach my $entry (@pass_data) {
