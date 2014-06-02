@@ -54,6 +54,7 @@ our %eol_tokens =  (
     m4                       =>  ['#'],
     MUMPS                    =>  [';'],
     mutt                     =>  ['#'],
+   '.Net'                    =>  ["REM", "'", "\x{2018}", "\x{2019}"],
     Nickle                   =>  ['#'],
     PEARL                    =>  ['!'],
     Perl                     =>  ['#'],
