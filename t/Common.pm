@@ -34,6 +34,7 @@ our %eol_tokens =  (
     Dylan                    =>  ['//'],
     ECMAScript               =>  ['//'],
     Eiffel                   =>  ['--'],
+    Erlang                   =>  ['%'],
     Forth                    =>  ['\\'],
     Fortran                  =>  ['!'],
     FPL                      =>  ['//'],

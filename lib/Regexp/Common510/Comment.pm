@@ -67,6 +67,7 @@ my @eol = (
     CQL              =>  ';',
    'Crystal Report'  =>  '//',
     Eiffel           =>  '--',
+    Erlang           =>  '%',
     Forth            =>  '\\\\',
     Fortran          =>  '!',
     fvwm2            =>  '#',
