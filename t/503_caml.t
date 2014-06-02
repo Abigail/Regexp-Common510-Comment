@@ -39,7 +39,9 @@ my @pass_data = (
     ["Space body"         =>   " "],
     ["Newline as comment" =>  "\n"],
     ["Regular comment"    =>  "This is a comment"],
-    ["Unicode"            => "Pick up the \x{260F}!"],
+    ["Unicode"            =>  "Pick up the \x{260F}!"],
+    ["Single quote"       =>  "This is ' a comment"],
+    ["Single quotes"      =>  "This is ' a ' comment"],
     #
     # A couple of 'nested' cases
     #
