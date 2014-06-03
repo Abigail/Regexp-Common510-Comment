@@ -91,6 +91,7 @@ our %from_to_tokens = (
     B                        => [['/*',      '*/']],
    'Befunge-98'              => [[';',       ';']],
     BML                      => [['<?_c',    '_c?>']],
+    Boomerang                => [['(*',      '*)']],
     C                        => [['/*',      '*/']],
    'C--'                     => [['/*',      '*/']],
    'C++'                     => [['/*',      '*/']],
@@ -133,7 +134,7 @@ our %from_to_tokens = (
 
 
 our @eol_nested = (qw [Dylan Haskell Hugo Scala SLIDE Swift]);
-our @nested     =  qw [Modula-2 Modula-3];
+our @nested     =  qw [Boomerang Modula-2 Modula-3];
 our @eol = do {
     my %filter = map {$_ => 1} @eol_nested;
     grep {!$filter {$_}} keys %eol_tokens;

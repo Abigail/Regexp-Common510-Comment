@@ -142,6 +142,8 @@ my @eol_from_to = (
 
 
 my @nested = (
+    Boomerang        =>  '(*',  '*)',  # http://www.seas.upenn.edu/~harmony/
+                                       # manual.pdf
    'Modula-2'        =>  '(*',  '*)',
    'Modula-3'        =>  '(*',  '*)',
 );
