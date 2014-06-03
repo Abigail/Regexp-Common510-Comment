@@ -608,6 +608,27 @@ pattern $CATEGORY => 'Brainfuck',
         -pattern  => '(?k<comment>:(?k<body>:[^][<>.,+-]+))',
 ;
 
+
+#
+# D has three types of comments:
+#     -  // till end of line, where end of line is LINE-FEED, CARRIAGE-RETURN,
+#           CARRIAGE-RETURN LINE-FEED, LINE-SEPARATOR, or PARAGRAPH-SEPARATOR.
+#     -  C-style, non nesting /* */ comment.
+#     -  Nested /+ +/ comments.
+#
+pattern $CATEGORY => 'D',
+        -pattern  => do {
+            my @patterns;
+            push @patterns => "(?k<open_delimiter>//)"                 .
+                              "(?k<body>[^\x0A\x0D\x{2028}\x{2029}]*)" .
+                              "(?k<close_delimiter>" .
+                                  "(?>\x0A\x0D)|[\x0A\x0D\x{2028}\x{2029}])";
+            push @patterns => from_to '/*', '*/';
+            push @patterns => nested  '/+', '+/';
+            local $" = "|";
+            "(?k<comment>:(?|@patterns))";
+        };
+
 1;
 
 __END__
