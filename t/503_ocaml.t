@@ -13,18 +13,18 @@ no  warnings 'syntax';
 
 our $r = eval "require Test::NoWarnings; 1";
 
-my $pattern      = RE Comment => 'Caml'; 
-my $keep_pattern = RE Comment => 'Caml', -Keep => 1;
+my $pattern      = RE Comment => 'OCaml'; 
+my $keep_pattern = RE Comment => 'OCaml', -Keep => 1;
 
 my $test = Test::Regexp -> new -> init (
     keep_pattern    => $pattern,
     no_keep_message => 1,
-    name            => "Caml Comment",
+    name            => "OCaml Comment",
 );
 
 my $keep_test = Test::Regexp -> new -> init (
     keep_pattern    => $keep_pattern,
-    name            => "Caml Comment",
+    name            => "OCaml Comment",
 );
 
 my ($tag)      = $pattern      =~ /(__RC_Comment_[^>]+)>/;
@@ -184,7 +184,7 @@ my @fail = (
                              =>  "body after close delimiter"],
 
     #
-    # Special 'Caml' failures
+    # Special 'OCaml' failures
     #
     [qq {$open " $close}     =>  "lone double quote"],
     [qq {$open "'" $close}   =>  "single quotes inside double quotes"],

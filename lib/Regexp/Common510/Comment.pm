@@ -408,10 +408,10 @@ sub sql {
 #
 # http://www.cs.caltech.edu/courses/cs134/cs134b/book.pdf
 #
-# In Caml, comments start with (* and end with *). They can be nested,
+# In OCaml, comments start with (* and end with *). They can be nested,
 # and delimiters that appear as string literals are ignored.
 #
-pattern $CATEGORY => "Caml",
+pattern $CATEGORY => "OCaml",
         -pattern  => do {
             my $tag = unique_name;
             my $esc = '\\\\';

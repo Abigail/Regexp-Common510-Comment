@@ -11,7 +11,7 @@ t/500_pascal.t
 t/501_html.t
 t/501_html_sgml.t
 t/502_brainfuck.t
-t/503_caml.t
+t/503_ocaml.t
 t/504_intercal.t
 t/505_sql.t
 t/506_algol.t
