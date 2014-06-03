@@ -151,6 +151,9 @@ my @eol_nested = (
     Dylan            =>  '//',        '/*',  '*/',
     Haskell          =>  '-{2,}',     '{-',  '-}',
     Hugo             =>  '!(?!\\\\)', '!\\', '\\!',
+    Scala            =>  '//',        '/*',  '*/', # http://www.scala-lang.org/
+                                                   # files/archive/nightly/
+                                                   # pdfs/ScalaReference.pdf
     SLIDE            =>  '#',         '(*',  '*)',
     Swift            =>  '//',        '/*',  '*/',
 );
