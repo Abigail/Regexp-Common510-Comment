@@ -49,6 +49,7 @@ our %eol_tokens =  (
     JavaScript               =>  ['//'],
     LaTeX                    =>  ['%'], 
     Lisp                     =>  [';'],
+    LLVM                     =>  [';'],   
     LOGO                     =>  [';'],
     lua                      =>  ['--'],
     M                        =>  [';'],

@@ -76,6 +76,7 @@ my @eol = (
     J                =>  'NB[.]',
     LaTeX            =>  '%',
     Lisp             =>  ';',
+    LLVM             =>  ';',   # http://llvm.org/docs/LangRef.html
     LOGO             =>  ';',
     lua              =>  '--',
     M                =>  ';',
