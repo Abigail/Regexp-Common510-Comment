@@ -616,6 +616,8 @@ pattern $CATEGORY => 'Brainfuck',
 #     -  C-style, non nesting /* */ comment.
 #     -  Nested /+ +/ comments.
 #
+# http://dlang.org/lex.html#Comment
+#
 pattern $CATEGORY => 'D',
         -pattern  => do {
             my @patterns;
