@@ -131,6 +131,8 @@ my @eol_from_to = (
     ECMAScript       =>  '//',      '/*',  '*/',
     FPL              =>  '//',      '/*',  '*/',
     Go               =>  '//',      '/*',  '*/',
+    Hack             =>  '#|//',    '/*',  '*/', # http://docs.hhvm.com/manual/
+                                                 # en/hacklangref.php
     Java             =>  '//',      '/*',  '*/',
     JavaScript       =>  '//',      '/*',  '*/',
     Nickle           =>  '#',       '/*',  '*/',
