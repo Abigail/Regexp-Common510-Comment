@@ -103,6 +103,8 @@ my @eol = (
     troff            =>  '\\\"',
     Ubercode         =>  '//',
     vi               =>  '"',
+    Zeno             =>  '%',  # http://mysite.verizon.net/res148h4j/zenoguide/
+                               # zeno_guide-004.html
     zonefile         =>  ';',
    'ZZT-OOP'         =>  "'",
 );

@@ -83,6 +83,7 @@ our %eol_tokens =  (
     troff                    =>  ['\\"'],
     Ubercode                 =>  ['//'],
     vi                       =>  ['"'], 
+    Zeno                     =>  ['%'], 
     zonefile                 =>  [';'],
    'ZZT-OOP'                 =>  ["'"],
 );
