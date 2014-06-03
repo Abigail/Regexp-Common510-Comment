@@ -81,6 +81,7 @@ my @eol = (
     lua              =>  '--',
     M                =>  ';',
     m4               =>  '#',
+    Miranda          =>  '!!',  # http://miranda.org.uk/
     MUMPS            =>  ';',
     mutt             =>  '#',
    '.Net'            =>  "REM|['\x{2018}\x{2019}]",
