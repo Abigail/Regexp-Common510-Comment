@@ -73,6 +73,7 @@ our %eol_tokens =  (
     SLIDE                    =>  ['#'],
     slrn                     =>  ['%'],
     SMITH                    =>  [';'],
+    Swift                    =>  ['//'],
     Tcl                      =>  ['#'], 
     TeX                      =>  ['%'],
     troff                    =>  ['\\"'],
@@ -119,13 +120,14 @@ our %from_to_tokens = (
     Shelta                   => [[';',       ';']],
     Smalltalk                => [['"',       '"']],
     SLIDE                    => [['(*',      '*)']],
+    Swift                    => [['/*',      '*/']],
    '*W'                      => [['||',      '!!']],
     XML                      => [['<!--',    '-->']],
 );
 
 
 
-our @eol_nested = (qw [Dylan Haskell Hugo SLIDE]);
+our @eol_nested = (qw [Dylan Haskell Hugo SLIDE Swift]);
 our @nested     =  qw [Modula-2 Modula-3];
 our @eol = do {
     my %filter = map {$_ => 1} @eol_nested;
