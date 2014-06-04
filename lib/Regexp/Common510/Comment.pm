@@ -149,6 +149,8 @@ my @nested = (
                                        # manual.pdf
    'Modula-2'        =>  '(*',  '*)',
    'Modula-3'        =>  '(*',  '*)',
+    Rexx             =>  '/*',  '*/',  # http://www.kilowattsoftware.com/
+                                       # tutorial/rexx
 );
 
 

@@ -124,6 +124,7 @@ our %from_to_tokens = (
     PHP                      => [['/*',      '*/']],
    'PL/I'                    => [['/*',      '*/']],
     Oberon                   => [['(*',      '*)']],
+    Rexx                     => [['/*',      '*/']],
     Scala                    => [['/*',      '*/']],
     Shelta                   => [[';',       ';']],
     Smalltalk                => [['"',       '"']],
@@ -136,7 +137,7 @@ our %from_to_tokens = (
 
 
 our @eol_nested = (qw [Dylan Haskell Hugo Scala SLIDE Swift]);
-our @nested     =  qw [Boomerang Modula-2 Modula-3];
+our @nested     =  qw [Boomerang Modula-2 Modula-3 Rexx];
 our @eol = do {
     my %filter = map {$_ => 1} @eol_nested;
     grep {!$filter {$_}} keys %eol_tokens;
