@@ -15,7 +15,8 @@ our $r = eval "require Test::NoWarnings; 1";
 
 Test::NoWarnings::had_no_warnings () if $r;
 
-my @flavours = ("", "ISO", "Alice", "Delphi", "Free", "GPC", "Workshop");
+my @flavours = ("", "ISO", "Alice", "Delphi", "Free", "GPC", "Workshop",
+                "UCSD");
 
 my %tokens = (
     ""          => [['{', '}'], ['{', '*)'], ['(*', '}'], ['(*', '*)']],
@@ -25,6 +26,7 @@ my %tokens = (
     "Free"      => [['{', '}'], ['(*', '*)'], ['//', "\n"]],
     "GPC"       => [['{', '}'], ['(*', '*)'], ['//', "\n"]],
     "Workshop"  => [['{', '}'], ['(*', '*)'], ['"', '"'], ['/*', '*/']],
+    "USCD"      => [['{', '}'], ['(*', '*)']],
 );
 
 sub make_tester {

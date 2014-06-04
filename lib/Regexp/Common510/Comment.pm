@@ -321,6 +321,10 @@ sub pascal {
             push @patterns => eol '//';
         }
     }
+    elsif ($flavour eq "UCSD") {
+        push @patterns => from_to ('{',  '}'),
+                          from_to ('(*', '*)');
+    }
     else {
         die "Unknown -flavour '$_'";
     }
