@@ -321,7 +321,13 @@ sub pascal {
             push @patterns => eol '//';
         }
     }
-    elsif ($flavour eq "UCSD") {
+    #
+    # http://miller.emu.id.au/pmiller/ucsd-psystem-um/
+    #                                 ucsd-pascal-ii.0-user-manual-facsimile.pdf
+    # http://www.znode51.de/pcwworld/l103/user_0/jrtman.002
+    #
+    elsif ($flavour eq "UCSD" ||
+           $flavour eq "JRT") {   
         push @patterns => from_to ('{',  '}'),
                           from_to ('(*', '*)');
     }
