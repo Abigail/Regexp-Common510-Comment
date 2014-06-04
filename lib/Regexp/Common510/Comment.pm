@@ -325,9 +325,11 @@ sub pascal {
     # http://miller.emu.id.au/pmiller/ucsd-psystem-um/
     #                                 ucsd-pascal-ii.0-user-manual-facsimile.pdf
     # http://www.znode51.de/pcwworld/l103/user_0/jrtman.002
+    # http://www.cpm.z80.de/manuals/mtplus.zip
     #
     elsif ($flavour eq "UCSD" ||
-           $flavour eq "JRT") {   
+           $flavour eq "JRT"  ||
+           $flavour eq "MT+") {   
         push @patterns => from_to ('{',  '}'),
                           from_to ('(*', '*)');
     }
