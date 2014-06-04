@@ -99,6 +99,8 @@ my @eol = (
     slrn             =>  '%',
     SMITH            =>  ';',
     Tcl              =>  '#',
+    Tea              =>  '#',  # http://www.pdmfc.com/tea/doc/Presentations/
+                               # Tutorial/html/01-Syntax005.html
     TeX              =>  '%',
     troff            =>  '\\\"',
     Ubercode         =>  '//',

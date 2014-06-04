@@ -79,6 +79,7 @@ our %eol_tokens =  (
     SMITH                    =>  [';'],
     Swift                    =>  ['//'],
     Tcl                      =>  ['#'], 
+    Tea                      =>  ['#'],
     TeX                      =>  ['%'],
     troff                    =>  ['\\"'],
     Ubercode                 =>  ['//'],
