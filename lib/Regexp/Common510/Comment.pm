@@ -122,6 +122,8 @@ my @from_to = (
     False            =>  '!{',      '}!',
    'Funge-98'        =>  ';',       ';',
     Haifu            =>  ',',       ',',
+    Karel            =>  '{',       '}',  # http://karel.sourceforge.net/doc
+                                          # html_mono/karel.html
     LPC              =>  '/*',      '*/',
     Oberon           =>  '(*',      '*)',
    'PL/I'            =>  '/*',      '*/',
