@@ -652,6 +652,19 @@ pattern $CATEGORY => 'D',
             "(?k<comment>:(?|@patterns))";
         };
 
+
+#
+# http://partners.adobe.com/public/developer/en/ps/PLRM.pdf
+#
+# Comments start with a '%', and last till the first newline or formfeed
+# character.
+#
+pattern $CATEGORY => 'PostScript',
+        -pattern  => "(?k<comment>:(?k<open_delimiter>:%)" .
+                     "(?k<body>:[^\n\x0C]*)" .
+                     "(?k<close_delimiter>:[\n\x0C]))"
+;
+
 1;
 
 __END__

@@ -57,15 +57,29 @@ foreach my $lang_flavour (@from_to) {
             push @fail_data => ["Internal newline" =>
                                 "${open}This is\nthe body${close}"];
         }
+        elsif ($lang eq 'PostScript') {
+            push @fail_data => ["Internal newline" => 
+                                "${open}This is\nthe body${close}"],
+                               ["Internal formfeed" => 
+                                "${open}This is\x{0C}the body${close}"],
+        }
         else {
-            push @pass_data => ["Internal newline" =>  "This is\nthe body"];
+            push @pass_data => ["Internal newline"  => "This is\nthe body"];
+            ;
+        }
+
+        if ($lang eq 'XML' || $lang eq 'PostScript') {
+            push @fail_data =>
+                ["Internal formfeed" => "${open}This is\x{0C}the body${close}"];
+        }
+        else {
+            push @pass_data => ["Internal formfeed" => "This is\x{0C}the body"];
         }
 
         if ($lang eq 'XML') {
             push @fail_data =>
                 ["Double --"         => "${open}This is--the body${close}"],
                 ["Dash before close" => "${open}This is the body-$close"],
-                ["Form feed"         => "${open} \x{0C} ${close}"],
             ;
         }
 
