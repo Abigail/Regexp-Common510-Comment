@@ -131,6 +131,8 @@ my @from_to = (
     Shelta           =>  ';',       ';',
     Smalltalk        =>  '"',       '"',
    '*W'              =>  '||',      '!!',
+    Wolfram          =>  '(*',      '*)', # http://reference.wolfram.com/
+                                          # language/guide/Syntax.html
 );
 
 my @eol_from_to = (
