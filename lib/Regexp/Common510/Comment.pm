@@ -81,6 +81,7 @@ my @eol = (
     lua              =>  '--',
     M                =>  ';',
     m4               =>  '#',
+    make             =>  '#',
     Miranda          =>  '!!',  # http://miranda.org.uk/
     MUMPS            =>  ';',
     mutt             =>  '#',

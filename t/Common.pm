@@ -55,6 +55,7 @@ our %eol_tokens =  (
     lua                      =>  ['--'],
     M                        =>  [';'],
     m4                       =>  ['#'],
+    make                     =>  ['#'],
     Miranda                  =>  ['!!'],
     MUMPS                    =>  [';'],
     mutt                     =>  ['#'],
