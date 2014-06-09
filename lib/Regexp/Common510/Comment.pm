@@ -149,6 +149,8 @@ my @eol_from_to = (
     PEARL            =>  '!',       '/*',  '*/', # http://www.irt.uni-hannover.
                                                  # de/pearl/pub/report.pdf
     PHP              =>  '#|//',    '/*',  '*/',
+    Pure             =>  '#!|//',   '/*',  '*/', # http://puredocs.bitbucket.org
+                                                 # /pure.html
 );
 
 

@@ -65,10 +65,10 @@ foreach my $lang_flavour (@eol, @eol_nested) {
             ["Trailing space"              => "$token $body\n "],
             ["Leading space"               => " $token $body\n"],
         );
-        my $wrong_delim = $token eq '//'                        ? '/*'
-                        : $lang  eq 'PHP' || $lang eq 'Advisor' ||
-                          $lang  eq 'Hack'                      ? '--'
-                        :                                         '//';
+        my $wrong_delim = $token eq '//'                         ? '/*'
+                        : $lang  eq 'PHP'  || $lang eq 'Advisor' ||
+                          $lang  eq 'Hack' || $lang eq 'Pure'    ? '--'
+                        :                                          '//';
         push @fail_data => 
             ["Wrong delimiter"             => "${wrong_delim} $body\n"];
 
