@@ -146,7 +146,8 @@ my @eol_from_to = (
     Java             =>  '//',      '/*',  '*/',
     JavaScript       =>  '//',      '/*',  '*/',
     Nickle           =>  '#',       '/*',  '*/',
-    PEARL            =>  '!',       '/*',  '*/',
+    PEARL            =>  '!',       '/*',  '*/', # http://www.irt.uni-hannover.
+                                                 # de/pearl/pub/report.pdf
     PHP              =>  '#|//',    '/*',  '*/',
 );
 
