@@ -53,9 +53,13 @@ my @pass_data = (
     #
     # With string literals
     #
-    ["String inside"                 => 'This is "a comment"'],
-    ["Open delimiter inside string"  => 'This "${open}" is a comment'],
-    ["Close delimiter inside string" => 'This "${close}" is a comment'],
+    ["String inside"                   => 'This is "a comment"'],
+    ["Open delimiter inside string"    => 'This "${open}" is a comment'],
+    ["Close delimiter inside string"   => 'This "${close}" is a comment'],
+    ["Escape inside string"            => 'This "is \" a ${close} " comment'],
+    ["Escaped single quote in literal" => q {This is "\'"a comment}],
+    ["Numeric constant in literal"     => q {This is "\123"a comment}],
+    ["Hex constant in literal"         => q {This is "\x23"a comment}],
 
     #
     # Quotes
@@ -86,8 +90,11 @@ my @fail_data = (
     #
     # Quotes
     #
-    ["Unclosed double quote"   => qq {$open This is "a comment $close}],
-    ["Single quote in literal" => qq {$open This is "'"a comment $close}],
+    ["Unclosed double quote"      => qq {$open This is "a comment $close}],
+    ["Single quote in literal"    => qq {$open This is "'"a comment $close}],
+    ["Numeric constant too short" => qq {$open This is "\\12"a comment $close}],
+    ["Hex constant too short"     => qq {$open This is "\\x2"a comment $close}],
+
 );
 
 foreach my $entry (@pass_data) {
@@ -122,88 +129,3 @@ done_testing;
 
 
 __END__
-
-my $nest = $W;
-   $nest = "$open$nest$close" for 1 .. 100;
-
-my $nest7 = $W;
-my $nest9 = $W;
-   $nest7 = "$open$nest7$close" for 1 .. 7;
-   $nest9 = "$open$nest9$close" for 1 .. 9;
-
-my @pass = (
-    [""                      =>  "empty body"],
-    ["$W $W"                 =>  "standard body"],
-    ["\n"                    =>  "body is newline"],
-    ["$W \x{BB} $W"          =>  "Latin-1 in body"],
-    ["$W \x{4E00} $W"        =>  "Unicode in body"],
-    [$BIG                    =>  "Large body"],
-    ["--"                    =>  "hyphens"],
-    [" // "                  =>  "slashes"],
-    [" "                     =>  "body is a space"],
-    ["*"                     =>  "body is a star"],
-    ["$open$close"           =>  "simple nested"],
-    ["$W $open $W $close $W" =>  "nested"],
-    [$nest                   =>  "deeply nested"],
-    ["$nest7 $W $nest9"      =>  "double nested"],
-
-    [qq {" "}                =>  "string inside"],
-    [qq {"(*"}               =>  "open delimiter inside string"],
-    [qq {"*)"}               =>  "close delimiter inside string"],
-    [qq {"\\""}              =>  "escaped string delimiter inside string"],
-    [qq {'}                  =>  "lone single quote"],
-    [qq {' '}                =>  "single quotes"],
-);
-
-
-my @fail = (
-    #
-    # "Standard" fail tests.
-    #
-    ["$open"                 =>  "no close delimiters"],
-    ["$open $open $close"    =>  "not enough close delimiters"],
-    ["$open $close $close $open"
-                             =>  "unbalanced delimiters"],
-    ["$open $close//"        =>  "trailing garbage"],
-    ["$open $close "         =>  "trailing space"],
-    ["$open $open $close $close\n"
-                             =>  "trailing newline"],
-    ["$open $W $W $open"     =>  "open instead of close delimiter"],
-    ["$open \n $open"        =>  "open instead of close delimiter"],
-    ["$open $close$open $close"
-                             =>  "unbalanced delimiters"],
-    ["$close$open"           =>  "reversed delimiters"],
-    ["$close $W $open"       =>  "reversed delimiters"],
-    ["$open$close$close"     =>  "extra close delimiter"],
-    ["$open $W $W"           =>  "no close delimiter"],
-    ["$open ??"              =>  "no close delimiter"],
-    [" $open $W $close"      =>  "leading space"],
-    ["\n$open $open $close $close"
-                             =>  "leading newline"],
-    ["$open $open $close $close $BIG"
-                             =>  "body after close delimiter"],
-
-    #
-    # Special 'OCaml' failures
-    #
-    [qq {$open " $close}     =>  "lone double quote"],
-    [qq {$open "'" $close}   =>  "single quotes inside double quotes"],
-    [qq {$open "\\q" $close} =>  "not a proper escape"],
-    [qq {$open "\\12" $close}  =>  "incomplete decimal escape"],
-    [qq {$open "\\F " $close}  =>  "incomplete hex escape"],
-);
-
-run_tests
-    pass                 => \@pass,
-    fail                 => \@fail,
-    checker              => $checker,
-    ghost_name_captures  => 1,
-    ghost_num_captures   => 1,
-    make_subject         => sub {'(*' . $_ [0] . '*)'},
-    make_captures        => sub {[
-        [undef ()        => $open . $_ [0] . $close],
-        [open_delimiter  => $open],
-        [body            => $_ [0]],
-        [close_delimiter => $close],
-    ]}
-;
