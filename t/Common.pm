@@ -26,6 +26,7 @@ our %eol_tokens =  (
    'BASIC,mvEnterprise'      =>  ['REM', '*', '!'],
     BCPL                     =>  ['//'],
    'beta-Juliet'             =>  ['//'],
+    Blue                     =>  ['--', '=='],
    'C++'                     =>  ['//'],
     Cg                       =>  ['//'],
     CLU                      =>  ['%'],

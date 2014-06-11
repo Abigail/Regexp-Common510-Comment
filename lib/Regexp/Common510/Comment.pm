@@ -63,6 +63,8 @@ my @eol = (
     awk              =>  '#',
     BCPL             =>  '//',
    'beta-Juliet'     =>  '//',
+    Blue             =>  '--|==', # http://www.cs.kent.ac.uk/people/staff/
+                                  # mik/blue/doc/spec-102.pdf
     CLU              =>  '%',
     CQL              =>  ';',
    'Crystal Report'  =>  '//',
