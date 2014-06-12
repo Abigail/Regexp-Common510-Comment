@@ -140,6 +140,9 @@ my @from_to = (
 my @eol_from_to = (
    'C++'             =>  '//',      '/*',  '*/',
     Cg               =>  '//',      '/*',  '*/',
+    Chuck            =>  '//',      '/*',  '*/', # http://chuck.cs.princeton.
+                                                 # edu/doc/language/
+                                                 # overview.html
     ECMAScript       =>  '//',      '/*',  '*/',
     FPL              =>  '//',      '/*',  '*/',
     Go               =>  '//',      '/*',  '*/',
