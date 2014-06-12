@@ -12,6 +12,13 @@ no  warnings 'syntax';
 
 our $r = eval "require Test::NoWarnings; 1";
 
+my $tester_algol58 =   Test::Regexp:: -> new -> init (
+    pattern        =>  RE (Comment => 'ALGOL', -flavour => 58),
+    keep_pattern   =>  RE (Comment => 'ALGOL', -flavour => 58, -Keep => 1),
+    name           => "ALGOL 58 comment",
+    full_text      =>  1,
+);
+
 my $tester_algol60 =   Test::Regexp:: -> new -> init (
     pattern        =>  RE (Comment => 'ALGOL', -flavour => 60),
     keep_pattern   =>  RE (Comment => 'ALGOL', -flavour => 60, -Keep => 1),
@@ -34,26 +41,40 @@ my $tester_a68toc  =   Test::Regexp:: -> new -> init (
     full_text      =>  1,
 );
 
-my $ALGOL_60 = 0x1;
-my $ALGOL_68 = 0x2;
-my $A68_TOC  = 0x4;
+my $tester_W       =   Test::Regexp:: -> new -> init (
+    pattern        =>  RE (Comment => 'ALGOL', -flavour => 'W'),
+    keep_pattern   =>  RE (Comment => 'ALGOL', -flavour => 'W',
+                                               -Keep    => 1),
+    name           => "ALGOL-W comment",
+    full_text      =>  1,
+);
+
+my $ALGOL_58 = 0x01;
+my $ALGOL_60 = 0x02;
+my $ALGOL_68 = 0x04;
+my $A68_TOC  = 0x08;
+my $ALGOL_W  = 0x10;
 
 my %tests = (
+    $ALGOL_58 => $tester_algol58,
     $ALGOL_60 => $tester_algol60,
     $ALGOL_68 => $tester_algol68,
     $A68_TOC  => $tester_a68toc,
+    $ALGOL_W  => $tester_W,
 );
 my @tags = sort {$a <=> $b} keys %tests;
 
 my @token_pairs = (
-    [$ALGOL_60            => "comment"  => ";"],
-    [$ALGOL_68 | $A68_TOC => "#"        => "#"],
-    [$ALGOL_68            => "comment"  => "comment"],
-    [$ALGOL_68            => "co"       => "co"],
-    [$ALGOL_68            => "\x{A2}"   => "\x{A2}"],
-    [$A68_TOC             => "COMMENT"  => "COMMENT"],
-    [$A68_TOC             => "CO"       => "CO"],
-    [$A68_TOC             => "{"        => "}"],
+    [$ALGOL_58 | $ALGOL_60 | $ALGOL_W => "comment"  => ";"],
+    [$ALGOL_68 | $A68_TOC             => "#"        => "#"],
+    [$ALGOL_68                        => "comment"  => "comment"],
+    [$ALGOL_68                        => "co"       => "co"],
+    [$ALGOL_68                        => "\x{A2}"   => "\x{A2}"],
+    [$A68_TOC                         => "COMMENT"  => "COMMENT"],
+    [$A68_TOC                         => "CO"       => "CO"],
+    [$A68_TOC                         => "{"        => "}"],
+    [$ALGOL_W                         => "%"        => "%"],
+    [$ALGOL_W                         => "%"        => ";"],
 );
    
 

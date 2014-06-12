@@ -496,13 +496,17 @@ pattern $CATEGORY => "INTERCAL",
 #     #         #
 #     {         }
 # as found on http://www.algol68.org/.
+#
+# http://www.softwarepreservation.org/projects/ALGOL/report/Algol58_preliminary_report_CACM.pdf/
+#
+# http://bitsavers.informatik.uni-stuttgart.de/pdf/univOfMichigan/mts/volumes/MTSVol16-ALGOLWInMTS-Sep1980.pdf
 # 
 sub algol {
     my %args = @_;
     my $flavour = $args {-flavour} // "68";
     my @patterns;
 
-    if ($flavour eq '60') {
+    if ($flavour eq '58' || $flavour eq '60') {
         push @patterns => from_to "comment" => ";";
     }
     elsif ($flavour eq "68") {
@@ -530,6 +534,13 @@ sub algol {
             '(?k<body>:[^C]*(?:(?:\BC|C(?!OMMENT\b))[^C]*)*)' .
             '(?k<close_delimiter>:\bCOMMENT\b)',
        ;
+    }
+    elsif ($flavour eq 'W') {
+        push @patterns => from_to ('comment', ';');
+        push @patterns =>
+            '(?k<open_delimiter>:%)'    .
+            '(?k<body>:[^%;]*)'         .
+            '(?k<close_delimiter>:[%;])';
     }
     else {
         die "Unknown -flavour '$_'";
