@@ -498,7 +498,7 @@ pattern $CATEGORY => "INTERCAL",
 #     {         }
 # as found on http://www.algol68.org/.
 # 
-sub algol68 {
+sub algol {
     my %args = @_;
     my $flavour = $args {-flavour} // "68";
     my @patterns;
@@ -536,9 +536,9 @@ sub algol68 {
     "(?k<comment>:(?|@patterns))";
 }
 
-pattern $CATEGORY => 'Algol 68',
-        -config   => {-flavour => undef},
-        -pattern  => \&algol68,
+pattern $CATEGORY => 'ALGOL',
+        -config   => {-flavour => 68},
+        -pattern  => \&algol,
 ;
 
 
