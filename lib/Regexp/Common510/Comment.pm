@@ -500,11 +500,11 @@ pattern $CATEGORY => "INTERCAL",
 # 
 sub algol68 {
     my %args = @_;
-    my $flavour = $args {-flavour} // "";
+    my $flavour = $args {-flavour} // "68";
     my @patterns;
     push @patterns => from_to ('#', '#');
 
-    if ($flavour eq "") {
+    if ($flavour eq "68") {
         push @patterns => from_to ("\x{A2}", "\x{A2}"),
 
             '(?k<open_delimiter>:\bco\b)'                     .
