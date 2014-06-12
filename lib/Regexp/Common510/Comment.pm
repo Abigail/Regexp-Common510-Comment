@@ -115,7 +115,6 @@ my @eol = (
 );
 
 my @from_to = (
-   'Algol 60'        =>  'comment', ';',
     ALPACA           =>  '/*',      '*/',
     B                =>  '/*',      '*/',
     BML              =>  '<?_c',    '_c?>',
@@ -502,9 +501,12 @@ sub algol {
     my %args = @_;
     my $flavour = $args {-flavour} // "68";
     my @patterns;
-    push @patterns => from_to ('#', '#');
 
-    if ($flavour eq "68") {
+    if ($flavour eq '60') {
+        push @patterns => from_to "comment" => ";";
+    }
+    elsif ($flavour eq "68") {
+        push @patterns => from_to ('#', '#');
         push @patterns => from_to ("\x{A2}", "\x{A2}"),
 
             '(?k<open_delimiter>:\bco\b)'                     .
@@ -517,15 +519,16 @@ sub algol {
         ;
     }
     elsif ($flavour eq "a68toc") {
-       push @patterns => from_to ("{", "}"),
+        push @patterns => from_to ('#', '#');
+        push @patterns => from_to ("{", "}"),
 
-           '(?k<open_delimiter>:\bCO\b)'                     .
-           '(?k<body>:[^C]*(?:(?:\BC|C(?!O\b))[^C]*)*)'      .
-           '(?k<close_delimiter>:\bCO\b)',
+            '(?k<open_delimiter>:\bCO\b)'                     .
+            '(?k<body>:[^C]*(?:(?:\BC|C(?!O\b))[^C]*)*)'      .
+            '(?k<close_delimiter>:\bCO\b)',
 
-           '(?k<open_delimiter>:\bCOMMENT\b)'                .
-           '(?k<body>:[^C]*(?:(?:\BC|C(?!OMMENT\b))[^C]*)*)' .
-           '(?k<close_delimiter>:\bCOMMENT\b)',
+            '(?k<open_delimiter>:\bCOMMENT\b)'                .
+            '(?k<body>:[^C]*(?:(?:\BC|C(?!OMMENT\b))[^C]*)*)' .
+            '(?k<close_delimiter>:\bCOMMENT\b)',
        ;
     }
     else {

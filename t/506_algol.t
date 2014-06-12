@@ -12,6 +12,13 @@ no  warnings 'syntax';
 
 our $r = eval "require Test::NoWarnings; 1";
 
+my $tester_algol60 =   Test::Regexp:: -> new -> init (
+    pattern        =>  RE (Comment => 'ALGOL', -flavour => 60),
+    keep_pattern   =>  RE (Comment => 'ALGOL', -flavour => 60, -Keep => 1),
+    name           => "ALGOL 60 comment",
+    full_text      =>  1,
+);
+
 my $tester_algol68 =   Test::Regexp:: -> new -> init (
     pattern        =>  RE (Comment => 'ALGOL', -flavour => 68),
     keep_pattern   =>  RE (Comment => 'ALGOL', -flavour => 68, -Keep => 1),
@@ -27,16 +34,19 @@ my $tester_a68toc  =   Test::Regexp:: -> new -> init (
     full_text      =>  1,
 );
 
-my $ALGOL_68 = 0x1;
-my $A68_TOC  = 0x2;
+my $ALGOL_60 = 0x1;
+my $ALGOL_68 = 0x2;
+my $A68_TOC  = 0x4;
 
 my %tests = (
+    $ALGOL_60 => $tester_algol60,
     $ALGOL_68 => $tester_algol68,
     $A68_TOC  => $tester_a68toc,
 );
 my @tags = sort {$a <=> $b} keys %tests;
 
 my @token_pairs = (
+    [$ALGOL_60            => "comment"  => ";"],
     [$ALGOL_68 | $A68_TOC => "#"        => "#"],
     [$ALGOL_68            => "comment"  => "comment"],
     [$ALGOL_68            => "co"       => "co"],
