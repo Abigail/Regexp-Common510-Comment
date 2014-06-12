@@ -85,6 +85,7 @@ our %eol_tokens =  (
     Tcl                      =>  ['#'], 
     Tea                      =>  ['#'],
     TeX                      =>  ['%'],
+    Timber                   =>  ['--'],
     troff                    =>  ['\\"'],
     Ubercode                 =>  ['//'],
     vi                       =>  ['"'], 
@@ -140,6 +141,7 @@ our %from_to_tokens = (
     Smalltalk                => [['"',       '"']],
     SLIDE                    => [['(*',      '*)']],
     Swift                    => [['/*',      '*/']],
+    Timber                   => [['{-',      '-}']],
    '*W'                      => [['||',      '!!']],
     Wolfram                  => [['(*',      '*)']],
     XML                      => [['<!--',    '-->']],
@@ -147,7 +149,7 @@ our %from_to_tokens = (
 
 
 
-our @eol_nested = (qw [Dylan Haskell Hugo Scala SLIDE Swift]);
+our @eol_nested = (qw [Dylan Haskell Timber Hugo Scala SLIDE Swift]);
 our @nested     =  qw [Boomerang Modula-2 Modula-3 Rexx];
 our @eol = do {
     my %filter = map {$_ => 1} @eol_nested;

@@ -178,6 +178,8 @@ my @eol_nested = (
                                                    # pdfs/ScalaReference.pdf
     SLIDE            =>  '#',         '(*',  '*)',
     Swift            =>  '//',        '/*',  '*/',
+    Timber           =>  '--',        '{-',  '-}', # http://www.timber-lang.org/
+                                                   # index_summary.html
 );
 
 
