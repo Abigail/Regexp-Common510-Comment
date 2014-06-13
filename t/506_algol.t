@@ -110,6 +110,21 @@ foreach my $token_pair (@token_pairs) {
                             captures => $captures,
                             test     => $test_name);
         }
+
+        unless ($open eq $close ||
+               ($tag eq $ALGOL_W && $open eq '%')) {
+            my $body     = "This is ${open} the body";
+            my $comment  = "${open}${body}${close}";
+            my $captures = [
+                [comment         => $comment],
+                [open_delimiter  => $open],
+                [body            => $body],
+                [close_delimiter => $close],
+            ];
+            $test -> match ($comment,
+                             captures => $captures,
+                             test     => "Open delimiter in body");
+        }
     }
 }
 
