@@ -87,6 +87,11 @@ my @pass_data = (
 );
 
 
+my @fail1_data = (
+    ["Empty string"    => ""],
+);
+
+
 foreach my $token_pair (@token_pairs) {
     my ($mask, $open, $close) = @$token_pair;
 
@@ -128,6 +133,14 @@ foreach my $token_pair (@token_pairs) {
     }
 }
 
+
+foreach my $fail_entry (@fail1_data) {
+    my ($reason, $subject) = @$fail_entry;
+
+    foreach my $tag (@tags) {
+        $tests {$tag} -> no_match ($subject, reason => $reason);
+    }
+}
 
 
 
