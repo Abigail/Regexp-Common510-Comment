@@ -84,11 +84,20 @@ my @pass_data = (
     ["Space"           => " "],
     ["Unicode"         => "Pick up the \x{260F}!"],
     ["Has newline"     => "This is\nthe body"],
+    ["Has { in body"   => "This is { the body"],
 );
 
 
 my @fail1_data = (
     ["Empty string"    => ""],
+);
+
+my @fail2_data = (
+    ["No open delimiter"     =>  "This is the body __CLOSE__"],
+    ["No close delimiter"    =>  "__OPEN__ This is the body"],
+    ["Trailing newline"      =>  "__OPEN__ This is the body __CLOSE__\n"],
+    ["Leading space"         =>  "  __OPEN__ This is the body __CLOSE__"],
+    ["Extra close delimiter" =>  "__OPEN__ This is the body __CLOSE__ __CLOSE"],
 );
 
 
@@ -129,6 +138,14 @@ foreach my $token_pair (@token_pairs) {
             $test -> match ($comment,
                              captures => $captures,
                              test     => "Open delimiter in body");
+        }
+
+        foreach my $entry (@fail2_data) {
+            my ($reason, $comment) = @$entry;
+            $comment =~ s/__OPEN__/$open/g;
+            $comment =~ s/__CLOSE__/$close/g;
+
+            $test -> no_match ($comment, reason => $reason);
         }
     }
 }
