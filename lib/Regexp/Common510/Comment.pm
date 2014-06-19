@@ -671,9 +671,9 @@ pattern $CATEGORY => 'Brainfuck',
 pattern $CATEGORY => 'D',
         -pattern  => do {
             my @patterns;
-            push @patterns => "(?k<open_delimiter>//)"                 .
-                              "(?k<body>[^\x0A\x0D\x{2028}\x{2029}]*)" .
-                              "(?k<close_delimiter>" .
+            push @patterns => "(?k<open_delimiter>://)"                 .
+                              "(?k<body>:[^\x0A\x0D\x{2028}\x{2029}]*)" .
+                              "(?k<close_delimiter>:" .
                                   "(?>\x0A\x0D)|[\x0A\x0D\x{2028}\x{2029}])";
             push @patterns => from_to '/*', '*/';
             push @patterns => nested  '/+', '+/';
